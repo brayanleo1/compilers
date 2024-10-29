@@ -9,64 +9,70 @@
 
  /* Regular Expressions and Actions: */
 
-"program"          { printf("Program\n"); return PROGRAM; }
-"main"             { printf("Main\n"); return MAIN; }
-"begin"            { printf("Begin\n"); return BEGIN; }
-"end"              { printf("End\n"); return END; }
-"const"            { printf("Const\n"); return CONST; }
-"int"              { printf("Int\n"); return INT; }
-"float"            { printf("Float\n"); return FLOAT; }
-"bool"             { printf("Bool\n"); return BOOL; }
-"char"             { printf("Char\n"); return CHAR; }
-"graph"            { printf("Graph\n"); return GRAPH; }
-"procedure"        { printf("Procedure\n"); return PROCEDURE; }
-"function"         { printf("Function\n"); return FUNCTION; }
-"if"               { printf("If\n"); return IF; }
-"then"             { printf("Then\n"); return THEN; }
-"do"               { printf("Do\n"); return DO; }
-"&&"               { printf("And\n"); return AND; }
-"||"               { printf("Or\n"); return OR; }
-"=="               { printf("Equals\n"); return EQUALS; }
-"elif"             { printf("Elif\n"); return ELIF; }
-"else"             { printf("Else\n"); return ELSE; }
-"switch"          { printf("Switch\n"); return SWITCH; }
-"case"            { printf("Case\n"); return CASE; }
-"default"         { printf("Default\n"); return DEFAULT; }
-"for"             { printf("For\n"); return FOR; }
-"loop"            { printf("Loop\n"); return LOOP; }
-"exit"            { printf("Exit\n"); return EXIT; }
-"when"            { printf("When\n"); return WHEN; }
+"program"          { printf("Program\n");/*  return PROGRAM;*/ }
+"main"             { printf("Main\n");/*  return MAIN;*/ }
+"begin"            { printf("Begin\n");/*  return BEGIN;*/ }
+"end"              { printf("End\n");/*  return END;*/ }
+"const"            { printf("Const\n");/*  return CONST;*/ }
+"int"              { printf("Int\n");/*  return INT;*/ }
+"float"            { printf("Float\n");/*  return FLOAT;*/ }
+"bool"             { printf("Bool\n");/*  return BOOL;*/ }
+"char"             { printf("Char\n");/*  return CHAR;*/ }
+"graph"            { printf("Graph\n");/*  return GRAPH;*/ }
+"procedure"        { printf("Procedure\n");/*  return PROCEDURE;*/ }
+"function"         { printf("Function\n");/*  return FUNCTION;*/ }
+"if"               { printf("If\n");/*  return IF;*/ }
+"then"             { printf("Then\n");/*  return THEN;*/ }
+"do"               { printf("Do\n");/*  return DO;*/ }
+"&&"               { printf("And\n");/*  return AND;*/ }
+"||"               { printf("Or\n");/*  return OR;*/ }
+"=="               { printf("Equals\n");/*  return EQUALS;*/ }
+"elif"             { printf("Elif\n");/*  return ELIF;*/ }
+"else"             { printf("Else\n");/*  return ELSE;*/ }
+"switch"          { printf("Switch\n");/*  return SWITCH;*/ }
+"case"            { printf("Case\n");/*  return CASE;*/ }
+"default"         { printf("Default\n");/*  return DEFAULT;*/ }
+"for"             { printf("For\n");/*  return FOR;*/ }
+"loop"            { printf("Loop\n");/*  return LOOP;*/ }
+"exit"            { printf("Exit\n");/*  return EXIT;*/ }
+"when"            { printf("When\n");/*  return WHEN;*/ }
 
-"<-"               { printf("Assign\n"); return ASSIGN; }
-":="               { printf("Assign\n"); return ASSIGN; }
-"\\("              { printf("LParen\n"); return LPAREN; }
-"\\)"              { printf("RParen\n"); return RPAREN; }
-":"                { printf("Colon\n"); return COLON; }
-","                { printf("Comma\n"); return COMMA; }
-";"                { printf("Semicolon\n"); return SEMICOLON; }
+"<-"               { printf("Assign\n");/*  return ASSIGN;*/ }
+":="               { printf("Assign\n");/*  return ASSIGN;*/ }
+"("              { printf("LParen\n");/*  return LPAREN;*/ }
+")"              { printf("RParen\n");/*  return RPAREN;*/ }
+":"                { printf("Colon\n");/*  return COLON;*/ }
+","                { printf("Comma\n");/*  return COMMA;*/ }
+";"                { printf("Semicolon\n");/*  return SEMICOLON;*/ }
 
-"+"                { printf("Plus\n"); return PLUS; }
-"-"                { printf("Minus\n"); return MINUS; }
-"*"                { printf("Multiply\n"); return MULTIPLY; }
-"/"                { printf("Divide\n"); return DIVIDE; }
+">"                { printf("GreaterThan\n");/*  return GREATERTHAN;*/ }
+"<"                { printf("LessThan\n");/*  return LESSTHAN;*/ }
+">="               { printf("GreaterThanOrEqual\n");/*  return GREATERTHANOREQUAL;*/ }
+"<="               { printf("LessThanOrEqual\n");/*  return LESSTHANOREQUAL;*/ }
+"!="               { printf("NotEqual\n");/*  return NOTEQUAL;*/ }
 
-[0-9]+             { printf("CInt\n"); yylval.int_val = atoi(yytext); return CINT; }
-([0-9]+"."[0-9]*) | ([0-9]*"."[0-9]+) { printf("CFloat\n"); return CFLOAT; }
-\"[^\"]*\"         { printf("CString\n"); yylval.str = strdup(yytext); return CSTRING; }
-"true"             { printf("CBool\n"); return CBOOL; }
-"false"            { printf("CBool\n"); return CBOOL; }
+"+"                { printf("Plus\n");/*  return PLUS;*/ }
+"-"                { printf("Minus\n");/*  return MINUS;*/ }
+"*"                { printf("Multiply\n");/*  return MULTIPLY;*/ }
+"/"                { printf("Divide\n");/*  return DIVIDE;*/ }
 
-[a-zA-Z_][a-zA-Z0-9_]* { printf("ID\n"); yylval.id = strdup(yytext); return ID; }
+[0-9]+             { printf("CInt\n"); /*yylval.int_val = atoi(yytext);  return CINT;*/ }
+([0-9]+"."[0-9]*) | ([0-9]*"."[0-9]+) { printf("CFloat\n");/*  return CFLOAT;*/ }
+\"[^\"]*\"         { printf("CString\n"); /*yylval.str = strdup(yytext);  return CSTRING;*/ }
+"true"             { printf("CBool\n");/*  return CBOOL;*/ }
+"false"            { printf("CBool\n");/*  return CBOOL;*/ }
+
+[a-zA-Z_][a-zA-Z0-9_]* { printf("ID\n"); /*yylval.id = strdup(yytext); return ID;*/ }
 
 [ \t\n\r]+         ; /* Ignore whitespace */
 
-.                  { printf("Unrecognized character: %s\n", yytext); return ERROR; }
+.                  { printf("Unrecognized character: %s\n", yytext);/*  return ERROR;*/ }
 
 %%
 
 /* C Code */
 
-int yywrap() {
+int yywrap(void) {
     return 1;
 }
 

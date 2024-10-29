@@ -36,6 +36,7 @@
 "loop"            { printf("Loop\n");/*  return LOOP;*/ }
 "exit"            { printf("Exit\n");/*  return EXIT;*/ }
 "when"            { printf("When\n");/*  return WHEN;*/ }
+"print"           { printf("Print\n");/*  return PRINT;*/ }
 
 "<-"               { printf("Assign\n");/*  return ASSIGN;*/ }
 ":="               { printf("Assign\n");/*  return ASSIGN;*/ }
@@ -55,6 +56,8 @@
 "-"                { printf("Minus\n");/*  return MINUS;*/ }
 "*"                { printf("Multiply\n");/*  return MULTIPLY;*/ }
 "/"                { printf("Divide\n");/*  return DIVIDE;*/ }
+"%"                { printf("Modulus\n");/*  return MODULUS;*/ }
+"**"               { printf("Power\n");/*  return POWER;*/ }
 
 [0-9]+             { printf("CInt\n"); /*yylval.int_val = atoi(yytext);  return CINT;*/ }
 ([0-9]+"."[0-9]*) | ([0-9]*"."[0-9]+) { printf("CFloat\n");/*  return CFLOAT;*/ }

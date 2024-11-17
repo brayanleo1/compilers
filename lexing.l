@@ -24,9 +24,6 @@
 "if"               { printf("If\n");/*  return IF;*/ }
 "then"             { printf("Then\n");/*  return THEN;*/ }
 "do"               { printf("Do\n");/*  return DO;*/ }
-"&&"               { printf("And\n");/*  return AND;*/ }
-"||"               { printf("Or\n");/*  return OR;*/ }
-"=="               { printf("Equals\n");/*  return EQUALS;*/ }
 "elif"             { printf("Elif\n");/*  return ELIF;*/ }
 "else"             { printf("Else\n");/*  return ELSE;*/ }
 "switch"          { printf("Switch\n");/*  return SWITCH;*/ }
@@ -37,6 +34,7 @@
 "exit"            { printf("Exit\n");/*  return EXIT;*/ }
 "when"            { printf("When\n");/*  return WHEN;*/ }
 "print"           { printf("Print\n");/*  return PRINT;*/ }
+"return"          { printf("Return\n");/*  return RETURN;*/ }
 
 "<-"               { printf("Assign\n");/*  return ASSIGN;*/ }
 ":="               { printf("Assign\n");/*  return ASSIGN;*/ }
@@ -51,6 +49,9 @@
 ">="               { printf("GreaterThanOrEqual\n");/*  return GREATERTHANOREQUAL;*/ }
 "<="               { printf("LessThanOrEqual\n");/*  return LESSTHANOREQUAL;*/ }
 "!="               { printf("NotEqual\n");/*  return NOTEQUAL;*/ }
+"&&"               { printf("And\n");/*  return AND;*/ }
+"||"               { printf("Or\n");/*  return OR;*/ }
+"=="               { printf("Equals\n");/*  return EQUALS;*/ }
 
 "+"                { printf("Plus\n");/*  return PLUS;*/ }
 "-"                { printf("Minus\n");/*  return MINUS;*/ }

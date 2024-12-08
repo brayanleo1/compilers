@@ -18,7 +18,7 @@
 "float"            { printf("Float\n");/*  return FLOAT;*/ }
 "bool"             { printf("Bool\n");/*  return BOOL;*/ }
 "char"             { printf("Char\n");/*  return CHAR;*/ }
-"graph"            { printf("Graph\n");/*  return GRAPH;*/ }
+"string"           { printf("String\n");/*  return STRING;*/ }
 "procedure"        { printf("Procedure\n");/*  return PROCEDURE;*/ }
 "function"         { printf("Function\n");/*  return FUNCTION;*/ }
 "if"               { printf("If\n");/*  return IF;*/ }
@@ -35,6 +35,7 @@
 "when"            { printf("When\n");/*  return WHEN;*/ }
 "print"           { printf("Print\n");/*  return PRINT;*/ }
 "return"          { printf("Return\n");/*  return RETURN;*/ }
+"register"        { printf("Register\n");/*  return REGISTER;*/ }
 
 "<-"               { printf("Assign\n");/*  return ASSIGN;*/ }
 ":="               { printf("Assign\n");/*  return ASSIGN;*/ }
@@ -43,6 +44,8 @@
 ":"                { printf("Colon\n");/*  return COLON;*/ }
 ","                { printf("Comma\n");/*  return COMMA;*/ }
 ";"                { printf("Semicolon\n");/*  return SEMICOLON;*/ }
+"["             { printf("LBracket\n");/*  return LBRACKET;*/ }
+"]"             { printf("RBracket\n");/*  return RBRACKET;*/ }
 
 ">"                { printf("GreaterThan\n");/*  return GREATERTHAN;*/ }
 "<"                { printf("LessThan\n");/*  return LESSTHAN;*/ }
@@ -61,10 +64,13 @@
 "**"               { printf("Power\n");/*  return POWER;*/ }
 
 [0-9]+             { printf("CInt\n"); /*yylval.int_val = atoi(yytext);  return CINT;*/ }
-([0-9]+"."[0-9]*) | ([0-9]*"."[0-9]+) { printf("CFloat\n");/*  return CFLOAT;*/ }
-\"[^\"]*\"         { printf("CString\n"); /*yylval.str = strdup(yytext);  return CSTRING;*/ }
+[0-9]+\.[0-9]*     { printf("CFloat\n");/*  yylval.float_val = atof(yytext); return CFLOAT;*/ }
+[0-9]*\.[0-9]+     { printf("CFloat\n");/*  yylval.float_val = atof(yytext); return CFLOAT;*/ }
+\'[^\']\'          { printf("CChar\n");/*  return CCHAR;*/ }
+\"[^"]*\"         { printf("CString\n");/*  return CSTRING;*/ }
 "true"             { printf("CBool\n");/*  return CBOOL;*/ }
 "false"            { printf("CBool\n");/*  return CBOOL;*/ }
+"["[^"]*"]"        { printf("CArray\n");/*  return CARRAY;*/ }
 
 [a-zA-Z_][a-zA-Z0-9_]* { printf("ID\n"); /*yylval.id = strdup(yytext); return ID;*/ }
 

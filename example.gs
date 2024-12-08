@@ -1,5 +1,5 @@
-int main() begin
-  float x := 5;
+main() begin
+  float x := 1.;
   float y := 4;
   char c := "3";
 

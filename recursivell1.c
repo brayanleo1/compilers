@@ -79,6 +79,7 @@ STMT ::= FOR
 STMT ::= LOOP
 STMT ::= WHEN
 STMT ::= UNLESS
+STMT ::= PRINT
 SUBPROGRAMS ::= SUBPROGRAM SUBPROGRAMS'  
 SUBPROGRAMS' ::= SUBPROGRAMS 
 SUBPROGRAMS' ::= '' 
@@ -101,6 +102,7 @@ FOR ::= for  ASSIGN ; EXP ; EXP STMTS end for
 LOOP ::= loop STMTS end loop
 WHEN ::= exit when ( EXP )
 UNLESS ::= unless ( EXP ) do STMT
+PRINT ::= print ( EXP ) ;
 
 */
 
@@ -117,8 +119,14 @@ int tok;
 
 //void advance() {tok=getToken();  printf("Token: %d\n", tok);}
 void advance() {tok=yylex();  printf("Token: %d\n", tok);}
-void eat(int t) {if (tok==t) advance(); else printf("Expected: %d\n" "Found: %d\n", t, tok);
-error();}
+void eat(int t) {
+    if (tok==t) {
+        advance();
+} else {
+        printf("Expected: %d\n" "Found: %d\n", t, tok);
+        error();
+    }
+}
 
 void error() {fprintf(stderr, "Syntax error\n"); printf("Expected: %d\n", tok);
 exit(1);}
@@ -472,6 +480,14 @@ void FUNC_UNLESS(void) {
     STMT();
 }
 
+void FUNC_PRINT(void) {
+    eat(PRINT);
+    eat(LPAREN);
+    EXP();
+    eat(RPAREN);
+    eat(SEMICOLON);
+}
+
 void STMTS(void) {
     STMT();
     STMTS_();
@@ -508,6 +524,7 @@ void STMT(void) {
         case LOOP: FUNC_LOOP(); break;
         case WHEN: FUNC_WHEN(); break;
         case UNLESS: FUNC_UNLESS(); break;
+        case PRINT: FUNC_PRINT(); break;
         default: printf("Error at STMT\n");
         error();
     }

@@ -117,9 +117,11 @@ int tok;
 
 //void advance() {tok=getToken();  printf("Token: %d\n", tok);}
 void advance() {tok=yylex();  printf("Token: %d\n", tok);}
-void eat(int t) {if (tok==t) advance(); else error();}
+void eat(int t) {if (tok==t) advance(); else printf("Expected: %d\n" "Found: %d\n", t, tok);
+error();}
 
-void error() {fprintf(stderr, "Syntax error\n"); exit(1);}
+void error() {fprintf(stderr, "Syntax error\n"); printf("Expected: %d\n", tok);
+exit(1);}
 
 
 void VARS(void) {
@@ -149,7 +151,8 @@ void TYPE(void) {
         case BOOL: eat(BOOL); break;
         case CHAR: eat(CHAR); break;
         case STRING: eat(STRING); break;
-        default: error();
+        default: printf("Error at TYPE\n");
+        error();
     }
 }
 
@@ -202,7 +205,8 @@ void LIT(void) {
         case CBOOL: eat(CBOOL); break;
         case CCHAR: eat(CCHAR); break;
         case CSTRING: eat(CSTRING); break;
-        default: error();
+        default: printf("Error at LIT\n");
+        error();
     }
 }
 
@@ -217,7 +221,8 @@ void O(void) {
         case CBOOL: eat(CBOOL); break;
         case CCHAR: eat(CCHAR); break;
         case CSTRING: eat(CSTRING); break;
-        default: error();
+        default: printf("Error at O\n");
+        error();
     }
 }
 
@@ -233,7 +238,8 @@ void AU(void) {
     switch (tok) {
         case PLUS: eat(PLUS); O(); break;
         case MINUS: eat(MINUS); O(); break;
-        default: error();
+        default: printf("Error at AU\n");
+        error();
     }
 }
 
@@ -287,7 +293,7 @@ void R(void) {
 }
 
 void R_(void) {
-    if (tok == EQUAL || tok == NOTEQUAL || tok == LESSTHAN || tok == GREATERTHAN || tok == LESSEQUAL || tok == GREATEREQUAL) {
+    if (tok == EQUALS || tok == NOTEQUAL || tok == LESSTHAN || tok == GREATERTHAN || tok == LESSTHANOREQUAL || tok == GREATERTHANOREQUAL) {
         eat(tok);
         AT();
         R_();
@@ -502,7 +508,8 @@ void STMT(void) {
         case LOOP: FUNC_LOOP(); break;
         case WHEN: FUNC_WHEN(); break;
         case UNLESS: FUNC_UNLESS(); break;
-        default: error();
+        default: printf("Error at STMT\n");
+        error();
     }
 }
 
@@ -510,7 +517,8 @@ void SUBPROGRAM(void) {
     switch (tok) {
         case FUNCTION: eat(FUNCTION); TYPE(); eat(ID); eat(LPAREN); ARGS(); eat(RPAREN); eat(BEGIN); STMTS(); eat(END); eat(ID); break;
         case PROCEDURE: eat(PROCEDURE); eat(ID); eat(LPAREN); ARGS(); eat(RPAREN); eat(BEGIN); STMTS(); eat(END); eat(ID); break;
-        default: error();
+        default: printf("Error at SUBPROGRAM\n");
+        error();
     }
 }
 
@@ -530,12 +538,12 @@ void SUBPROGRAMS(void) {
 void FUNC_MAIN(void) {
     eat(MAIN);
     eat(LPAREN);
-    ARGS();
+    ARGS_();
     eat(RPAREN);
 }
 
 void FUNC_PROGRAM(void) { 
-    SUBPROGRAMS();
+    SUBPROGRAMS_();
     FUNC_MAIN();
     eat(BEGIN);
     STMTS();
@@ -544,7 +552,18 @@ void FUNC_PROGRAM(void) {
 }
 
 int main(int argc, char **argv) {
-    //advance();
+    //Read the archive received by parameter
+    if (argc < 2) {
+        printf("Usage: %s <filename>\n", argv[0]);
+        return 1;
+    }
+    yyin = fopen(argv[1], "r");
+    if (yyin == NULL) {
+        printf("Could not open file %s\n", argv[1]);
+        return 1;
+    }
+
+    advance();
     FUNC_PROGRAM();
     return 0;
 }

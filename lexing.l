@@ -64,16 +64,16 @@
 "%"                { return MODULUS; }
 "**"               { return POWER; }
 
-[0-9]+             { yylval.int_val = atoi(yytext); return CINT; }
-[0-9]+\.[0-9]*     { yylval.real_val = atof(yytext);return CFLOAT; }
-[0-9]*\.[0-9]+     { yylval.float_val = atof(yytext);return CFLOAT; }
+[0-9]+             { /*yylval.int_val = atoi(yytext);*/ return CINT; }
+[0-9]+\.[0-9]*     { /*yylval.real_val = atof(yytext);*/ return CFLOAT; }
+[0-9]*\.[0-9]+     { /*yylval.float_val = atof(yytext);*/ return CFLOAT; }
 \'[^\']\'          { return CCHAR; }
 \"[^"]*\"         { return CSTRING; }
 "true"             { return CBOOL; }
 "false"            { return CBOOL; }
 "["[^"]*"]"        { return CARRAY; }
 
-[a-zA-Z_][a-zA-Z0-9_]* { yylval.id = strdup(yytext);return ID; }
+[a-zA-Z_][a-zA-Z0-9_]* { /*yylval.id = strdup(yytext);*/ return ID; }
 
 [ \t\n\r]+         ;  /*Ignore whitespace */
 

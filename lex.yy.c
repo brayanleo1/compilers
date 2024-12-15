@@ -1084,17 +1084,17 @@ YY_RULE_SETUP
 case 51:
 YY_RULE_SETUP
 #line 68 "lexing.l"
-{ yylval.int_val = atoi(yytext); return CINT; }
+{ /*yylval.int_val = atoi(yytext);*/ return CINT; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
 #line 69 "lexing.l"
-{ yylval.real_val = atof(yytext);return CFLOAT; }
+{ /*yylval.real_val = atof(yytext);*/ return CFLOAT; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
 #line 70 "lexing.l"
-{ yylval.float_val = atof(yytext);return CFLOAT; }
+{ /*yylval.float_val = atof(yytext);*/ return CFLOAT; }
 	YY_BREAK
 case 54:
 /* rule 54 can match eol */
@@ -1127,7 +1127,7 @@ YY_RULE_SETUP
 case 59:
 YY_RULE_SETUP
 #line 77 "lexing.l"
-{ yylval.id = strdup(yytext);return ID; }
+{ /*yylval.id = strdup(yytext);*/ return ID; }
 	YY_BREAK
 case 60:
 /* rule 60 can match eol */

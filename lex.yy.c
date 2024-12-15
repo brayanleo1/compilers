@@ -549,8 +549,9 @@ char *yytext;
     #include <stdio.h>
     #include <stdlib.h>
     //#include "y.tab.h" // If you are using YACC/Bison for parsing
-#line 553 "lex.yy.c"
+    #include "tokens.h"
 #line 554 "lex.yy.c"
+#line 555 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -767,13 +768,13 @@ YY_DECL
 		}
 
 	{
-#line 8 "lexing.l"
+#line 9 "lexing.l"
 
 
-#line 11 "lexing.l"
+#line 12 "lexing.l"
  /* Regular Expressions and Actions: */
 
-#line 777 "lex.yy.c"
+#line 778 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -832,319 +833,319 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 13 "lexing.l"
-{ printf("Program\n");/*  return PROGRAM;*/ }
+#line 14 "lexing.l"
+{ return PROGRAM; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 14 "lexing.l"
-{ printf("Main\n");/*  return MAIN;*/ }
+#line 15 "lexing.l"
+{ return MAIN; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 15 "lexing.l"
-{ printf("Begin\n");/*  return BEGIN;*/ }
+#line 16 "lexing.l"
+{ return BEGIN; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 16 "lexing.l"
-{ printf("End\n");/*  return END;*/ }
+#line 17 "lexing.l"
+{ return END; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 17 "lexing.l"
-{ printf("Const\n");/*  return CONST;*/ }
+#line 18 "lexing.l"
+{ return CONST; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 18 "lexing.l"
-{ printf("Int\n");/*  return INT;*/ }
+#line 19 "lexing.l"
+{ return INT; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 19 "lexing.l"
-{ printf("Float\n");/*  return FLOAT;*/ }
+#line 20 "lexing.l"
+{ return FLOAT; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 20 "lexing.l"
-{ printf("Bool\n");/*  return BOOL;*/ }
+#line 21 "lexing.l"
+{ return BOOL; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 21 "lexing.l"
-{ printf("Char\n");/*  return CHAR;*/ }
+#line 22 "lexing.l"
+{ return CHAR; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 22 "lexing.l"
-{ printf("String\n");/*  return STRING;*/ }
+#line 23 "lexing.l"
+{ return STRING; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 23 "lexing.l"
-{ printf("Procedure\n");/*  return PROCEDURE;*/ }
+#line 24 "lexing.l"
+{ return PROCEDURE; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 24 "lexing.l"
-{ printf("Function\n");/*  return FUNCTION;*/ }
+#line 25 "lexing.l"
+{ return FUNCTION; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 25 "lexing.l"
-{ printf("If\n");/*  return IF;*/ }
+#line 26 "lexing.l"
+{ return IF; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 26 "lexing.l"
-{ printf("Then\n");/*  return THEN;*/ }
+#line 27 "lexing.l"
+{ return THEN; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 27 "lexing.l"
-{ printf("Do\n");/*  return DO;*/ }
+#line 28 "lexing.l"
+{ return DO; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 28 "lexing.l"
-{ printf("Elif\n");/*  return ELIF;*/ }
+#line 29 "lexing.l"
+{ return ELIF; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 29 "lexing.l"
-{ printf("Else\n");/*  return ELSE;*/ }
+#line 30 "lexing.l"
+{ return ELSE; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 30 "lexing.l"
-{ printf("Switch\n");/*  return SWITCH;*/ }
+#line 31 "lexing.l"
+{ return SWITCH; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 31 "lexing.l"
-{ printf("Case\n");/*  return CASE;*/ }
+#line 32 "lexing.l"
+{ return CASE; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 32 "lexing.l"
-{ printf("Default\n");/*  return DEFAULT;*/ }
+#line 33 "lexing.l"
+{ return DEFAULT; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 33 "lexing.l"
-{ printf("For\n");/*  return FOR;*/ }
+#line 34 "lexing.l"
+{ return FOR; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 34 "lexing.l"
-{ printf("Loop\n");/*  return LOOP;*/ }
+#line 35 "lexing.l"
+{ return LOOP; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 35 "lexing.l"
-{ printf("Exit\n");/*  return EXIT;*/ }
+#line 36 "lexing.l"
+{ return EXIT; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 36 "lexing.l"
-{ printf("When\n");/*  return WHEN;*/ }
+#line 37 "lexing.l"
+{ return WHEN; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 37 "lexing.l"
-{ printf("Print\n");/*  return PRINT;*/ }
+#line 38 "lexing.l"
+{ return PRINT; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 38 "lexing.l"
-{ printf("Return\n");/*  return RETURN;*/ }
+#line 39 "lexing.l"
+{ return RETURN; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 39 "lexing.l"
-{ printf("Register\n");/*  return REGISTER;*/ }
+#line 40 "lexing.l"
+{ return REGISTER; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 41 "lexing.l"
-{ printf("Assign\n");/*  return ASSIGN;*/ }
+#line 42 "lexing.l"
+{ return ASSIGN; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 42 "lexing.l"
-{ printf("Assign\n");/*  return ASSIGN;*/ }
+#line 43 "lexing.l"
+{ return ASSIGN; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 43 "lexing.l"
-{ printf("LParen\n");/*  return LPAREN;*/ }
+#line 44 "lexing.l"
+{ return LPAREN; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 44 "lexing.l"
-{ printf("RParen\n");/*  return RPAREN;*/ }
+#line 45 "lexing.l"
+{ return RPAREN; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 45 "lexing.l"
-{ printf("Colon\n");/*  return COLON;*/ }
+#line 46 "lexing.l"
+{ return COLON; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 46 "lexing.l"
-{ printf("Comma\n");/*  return COMMA;*/ }
+#line 47 "lexing.l"
+{ return COMMA; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 47 "lexing.l"
-{ printf("Semicolon\n");/*  return SEMICOLON;*/ }
+#line 48 "lexing.l"
+{ return SEMICOLON; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 48 "lexing.l"
-{ printf("LBracket\n");/*  return LBRACKET;*/ }
+#line 49 "lexing.l"
+{ return LBRACKET; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 49 "lexing.l"
-{ printf("RBracket\n");/*  return RBRACKET;*/ }
+#line 50 "lexing.l"
+{ return RBRACKET; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 51 "lexing.l"
-{ printf("GreaterThan\n");/*  return GREATERTHAN;*/ }
+#line 52 "lexing.l"
+{ return GREATERTHAN; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 52 "lexing.l"
-{ printf("LessThan\n");/*  return LESSTHAN;*/ }
+#line 53 "lexing.l"
+{ return LESSTHAN; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 53 "lexing.l"
-{ printf("GreaterThanOrEqual\n");/*  return GREATERTHANOREQUAL;*/ }
+#line 54 "lexing.l"
+{ return GREATERTHANOREQUAL; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 54 "lexing.l"
-{ printf("LessThanOrEqual\n");/*  return LESSTHANOREQUAL;*/ }
+#line 55 "lexing.l"
+{ return LESSTHANOREQUAL; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 55 "lexing.l"
-{ printf("NotEqual\n");/*  return NOTEQUAL;*/ }
+#line 56 "lexing.l"
+{ return NOTEQUAL; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 56 "lexing.l"
-{ printf("And\n");/*  return AND;*/ }
+#line 57 "lexing.l"
+{ return AND; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 57 "lexing.l"
-{ printf("Or\n");/*  return OR;*/ }
+#line 58 "lexing.l"
+{ return OR; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 58 "lexing.l"
-{ printf("Equals\n");/*  return EQUALS;*/ }
+#line 59 "lexing.l"
+{ return EQUALS; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 60 "lexing.l"
-{ printf("Plus\n");/*  return PLUS;*/ }
+#line 61 "lexing.l"
+{ return PLUS; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 61 "lexing.l"
-{ printf("Minus\n");/*  return MINUS;*/ }
+#line 62 "lexing.l"
+{ return MINUS; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 62 "lexing.l"
-{ printf("Multiply\n");/*  return MULTIPLY;*/ }
+#line 63 "lexing.l"
+{ return MULTIPLY; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 63 "lexing.l"
-{ printf("Divide\n");/*  return DIVIDE;*/ }
+#line 64 "lexing.l"
+{ return DIVIDE; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 64 "lexing.l"
-{ printf("Modulus\n");/*  return MODULUS;*/ }
+#line 65 "lexing.l"
+{ return MODULUS; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 65 "lexing.l"
-{ printf("Power\n");/*  return POWER;*/ }
+#line 66 "lexing.l"
+{ return POWER; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 67 "lexing.l"
-{ printf("CInt\n"); /*yylval.int_val = atoi(yytext);  return CINT;*/ }
+#line 68 "lexing.l"
+{ yylval.int_val = atoi(yytext); return CINT; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 68 "lexing.l"
-{ printf("CFloat\n");/*  yylval.float_val = atof(yytext); return CFLOAT;*/ }
+#line 69 "lexing.l"
+{ yylval.real_val = atof(yytext);return CFLOAT; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 69 "lexing.l"
-{ printf("CFloat\n");/*  yylval.float_val = atof(yytext); return CFLOAT;*/ }
+#line 70 "lexing.l"
+{ yylval.float_val = atof(yytext);return CFLOAT; }
 	YY_BREAK
 case 54:
 /* rule 54 can match eol */
 YY_RULE_SETUP
-#line 70 "lexing.l"
-{ printf("CChar\n");/*  return CCHAR;*/ }
+#line 71 "lexing.l"
+{ return CCHAR; }
 	YY_BREAK
 case 55:
 /* rule 55 can match eol */
 YY_RULE_SETUP
-#line 71 "lexing.l"
-{ printf("CString\n");/*  return CSTRING;*/ }
+#line 72 "lexing.l"
+{ return CSTRING; }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 72 "lexing.l"
-{ printf("CBool\n");/*  return CBOOL;*/ }
+#line 73 "lexing.l"
+{ return CBOOL; }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 73 "lexing.l"
-{ printf("CBool\n");/*  return CBOOL;*/ }
+#line 74 "lexing.l"
+{ return CBOOL; }
 	YY_BREAK
 case 58:
 /* rule 58 can match eol */
 YY_RULE_SETUP
-#line 74 "lexing.l"
-{ printf("CArray\n");/*  return CARRAY;*/ }
+#line 75 "lexing.l"
+{ return CARRAY; }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 76 "lexing.l"
-{ printf("ID\n"); /*yylval.id = strdup(yytext); return ID;*/ }
+#line 77 "lexing.l"
+{ yylval.id = strdup(yytext);return ID; }
 	YY_BREAK
 case 60:
 /* rule 60 can match eol */
 YY_RULE_SETUP
-#line 78 "lexing.l"
-; /* Ignore whitespace */
+#line 79 "lexing.l"
+;  /*Ignore whitespace */
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 80 "lexing.l"
-{ printf("Unrecognized character: %s\n", yytext);/*  return ERROR;*/ }
+#line 81 "lexing.l"
+{ printf("Unrecognized character: %s\n", yytext); return ERROR; }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 82 "lexing.l"
+#line 83 "lexing.l"
 ECHO;
 	YY_BREAK
-#line 1148 "lex.yy.c"
+#line 1149 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2149,25 +2150,17 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 82 "lexing.l"
+#line 83 "lexing.l"
 
 
 /* C Code */
 
 int yywrap(void) {
-    return 1;
+   return 1;
 }
 
-int main(int argc, char **argv) {
-    if (argc > 1) {
-        FILE *file = fopen(argv[1], "r");
-        if (!file) {
-            perror("Could not open file");
-            return 1;
-        }
-        yyin = file;
-    }
-    yylex();
-    return 0;
+int yyerror(char *s) {
+    fprintf(stderr, "Error: %s\n", s);
+   return 0;
 }
 

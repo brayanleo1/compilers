@@ -1,6 +1,5 @@
 
 gs_lexer
-lex.yy.c
 .vscode/settings.json
 teste.out
 target

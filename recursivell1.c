@@ -108,18 +108,16 @@ UNLESS ::= unless ( EXP ) do STMT
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-//#include "lex.yy.c"
+#include "lex.yy.c"
+#include "tokens.h"
 
-enum token {PROGRAM, MAIN, BEGIN, END, FUNCTION, PROCEDURE, IF, THEN, ELSE, SWITCH, CASE, DEFAULT, FOR, LOOP, WHEN, 
-UNLESS, PRINT, ID, INT, FLOAT, BOOL, CHAR, STRING, REGISTER, CONST, AND, OR, NOT, PLUS, MINUS, TIMES, DIVIDE, MOD, 
-POWER, EQUAL, NOTEQUAL, LESSTHAN, GREATERTHAN, LESSEQUAL, GREATEREQUAL, ASSIGN, SEMICOLON, COMMA, COLON, LPAREN, 
-RPAREN, LBRACKET, RBRACKET, LBRACE, RBRACE, CINT, CFLOAT, CBOOL, CCHAR, CSTRING, END_OF_FILE, ERROR, DO, BREAK,
-ELIF, CARRAY};
 //extern enum token getToken(void);
 
-enum token tok;
-void advance() {/*tok=getToken(); */ printf("Token: %d\n", tok);}
-void eat(enum token t) {if (tok==t) advance(); else error();}
+int tok;
+
+//void advance() {tok=getToken();  printf("Token: %d\n", tok);}
+void advance() {tok=yylex();  printf("Token: %d\n", tok);}
+void eat(int t) {if (tok==t) advance(); else error();}
 
 void error() {fprintf(stderr, "Syntax error\n"); exit(1);}
 
@@ -259,7 +257,7 @@ void AF(void) {
 }
 
 void AF_(void) {
-    if (tok == TIMES || tok == DIVIDE) {
+    if (tok == MULTIPLY || tok == DIVIDE) {
         eat(tok);
         AP();
         AF_();
@@ -545,8 +543,8 @@ void FUNC_PROGRAM(void) {
     eat(PROGRAM);
 }
 
-int main() {
-    advance();
+int main(int argc, char **argv) {
+    //advance();
     FUNC_PROGRAM();
     return 0;
 }

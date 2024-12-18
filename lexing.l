@@ -47,6 +47,9 @@
 ";"                { return SEMICOLON; }
 "["             { return LBRACKET; }
 "]"             { return RBRACKET; }
+"{"             { return LBRACE; }
+"}"             { return RBRACE; }
+"."                { return DOT; }
 
 ">"                { return GREATERTHAN; }
 "<"                { return LESSTHAN; }

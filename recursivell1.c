@@ -2,9 +2,6 @@
 
 PROGRAM ::= SUBPROGRAMS' MAIN begin STMTS end program
 MAIN ::= main ( ARGS' )
-VARS ::= VAR VARS'
-VARS' ::= VARS
-VARS' ::= ''
 VAR ::= const TYPE ASSIGN
 VAR ::= TYPE ASSIGN
 VAR ::= REGISTER_DECL
@@ -14,30 +11,29 @@ TYPE ::= bool
 TYPE ::= char
 TYPE ::= string
 
-ASSIGN ::= id = ASSIGN'
-ASSIGN ::= ARRAY_DECL
-ASSIGN' ::= EXP;
-ASSIGN' ::= cchar;
-ASSIGN' ::= cstring;
+ASSIGN ::= id ARRAY_DECL = ASSIGN'
+ASSIGN' ::= EXP ;
+ASSIGN' ::= cchar ;
+ASSIGN' ::= cstring ;
+ASSIGN' ::= carray ;
 
-ARRAY_DECL ::= id[SIZE] ARRAY_DECL';
-ARRAY_DECL' ::= = carray
+ARRAY_DECL ::= [ SIZE ]
+ARRAY_DECL ::= ''
 SIZE ::= EXP
 
-REGISTER_DECL ::= register TYPE id;
+REGISTER_DECL ::= register TYPE id ;
 
 LIT ::= cint
 LIT ::= cfloat
 LIT ::= cbool
 O ::= id O'
-O ::= ARRAY_ACCESS O'
-O ::= REGISTER_ACCESS O'
-O ::= O'
-O' ::= LIT 
-O' ::= ( EXP ) 
+O :: O'
+O ::= LIT 
+O' ::= ( EXP )
+O' ::= [ EXP ]
+O' ::= . id
+O' ::= ''
 
-ARRAY_ACCESS ::= id[EXP]
-REGISTER_ACCESS ::= register id
 
 AU ::= + O 
 AU ::= - O 
@@ -53,6 +49,14 @@ AT ::= AF AT'
 AT' ::= + AF AT' 
 AT' ::= - AF AT' 
 AT' ::= ''
+R ::= AT R'
+R' ::= < AT
+R' ::= > AT
+R' ::= <= AT
+R' ::= >= AT
+R' ::= == AT
+R' ::= != AT
+R' ::= ''
 LU ::= not R 
 LU ::= R
 LC ::= LU LC'
@@ -61,9 +65,6 @@ LC' ::= ''
 EXP ::= LC EXP'
 EXP' ::= or LC EXP' 
 EXP' ::= ''
-EXPS ::= EXP ; EXPS'
-EXPS' ::= EXP ; EXPS'
-EXPS' ::= ''
 ARGS ::= TYPE id ARGS' 
 ARGS' ::= , ARGS  
 ARGS' ::= '' 
@@ -87,22 +88,23 @@ SUBPROGRAM ::= FUNCTION
 SUBPROGRAM ::= PROCEDURE 
 FUNCTION ::= function TYPE id ( ARGS' ) begin STMTS end id 
 PROCEDURE ::= procedure id ( ARGS' ) begin STMTS end id 
-IF ::= if  EXP  STMTS ELIF ELSE end if 
-ELIF ::= elif  EXP  STMTS 
-ELIF ::= '' 
-ELSE ::= else STMTS 
+IF ::= if ( EXP ) STMTS' ELIF' ELSE end if 
+ELIF ::= elif ( EXP ) STMTS' ELIF'
+ELIF' ::= '' 
+ELIF' ::= ELIF
+ELSE ::= else STMTS'
 ELSE ::= '' 
-SWITCH ::= switch  VAR  CASE DEFAULT end switch 
-CASE ::= case  EXP : STMTS break CASE' 
+SWITCH ::= switch ( VAR ) CASE DEFAULT end switch 
+CASE ::= case  EXP : STMTS' break ; CASE' 
 CASE' ::= CASE 
 CASE' ::= '' 
-DEFAULT ::= default : STMTS break  
+DEFAULT ::= default : STMTS' break ;
 DEFAULT ::= '' 
-FOR ::= for  ASSIGN ; EXP ; EXP STMTS end for 
+FOR ::= for ( ASSIGN ; EXP ; EXP ) STMTS' end for 
 LOOP ::= loop STMTS end loop
 WHEN ::= exit when ( EXP )
 UNLESS ::= unless ( EXP ) do STMT
-PRINT ::= print ( EXP ) ;
+PRINT ::= print ( ASSIGN' ) ;
 
 */
 
@@ -112,47 +114,46 @@ PRINT ::= print ( EXP ) ;
 #include <ctype.h>
 #include "lex.yy.c"
 #include "tokens.h"
+#include "getNameToken.c"
 
-//extern enum token getToken(void);
 
 int tok;
 
-//void advance() {tok=getToken();  printf("Token: %d\n", tok);}
-void advance() {tok=yylex();  printf("Token: %d\n", tok);}
+void advance() {tok=yylex();  printf("Next token: %s\n", getName(tok));}
 void eat(int t) {
     if (tok==t) {
+        printf("Eating: %s\n", getName(t));
         advance();
 } else {
-        printf("Expected: %d\n" "Found: %d\n", t, tok);
-        error();
+        errorE(t);
     }
 }
 
-void error() {fprintf(stderr, "Syntax error\n"); printf("Expected: %d\n", tok);
+void errorE(int t) {printf("Expected: %s, found: %s at Line %d\n", getName(t), getName(tok), yylineno);
+exit(1);}
+
+void error(void) {printf("Error - unexpected token: %s at Line %d\n", getName(tok), yylineno);
 exit(1);}
 
 
-void VARS(void) {
-    VAR();
-    VARS();
-}
-
-void VARS_(void) {
-    VARS();
-}
-
 void VAR(void) {
-    if (tok == CONST) {
-        eat(CONST);
-        TYPE();
-        FUNC_ASSIGN();
-    } else {
-        TYPE();
-        FUNC_ASSIGN();
+    printf ("Entering VAR\n");
+    switch (tok) {
+        case CONST: eat(CONST); TYPE(); FUNC_ASSIGN(); break;
+        case INT: TYPE(); FUNC_ASSIGN(); break;
+        case FLOAT: TYPE(); FUNC_ASSIGN(); break;
+        case BOOL: TYPE(); FUNC_ASSIGN(); break;
+        case CHAR: TYPE(); FUNC_ASSIGN(); break;
+        case STRING: TYPE(); FUNC_ASSIGN(); break;
+        case REGISTER: REGISTER_DECL(); break;
+        default: printf("Error at VAR\n");
+        error();
     }
+    printf ("Exiting VAR\n");
 }
 
 void TYPE(void) {
+    printf ("Entering TYPE\n");
     switch (tok) {
         case INT: eat(INT); break;
         case FLOAT: eat(FLOAT); break;
@@ -162,37 +163,47 @@ void TYPE(void) {
         default: printf("Error at TYPE\n");
         error();
     }
+    printf ("Exiting TYPE\n");
 }
 
 void FUNC_ASSIGN(void) {
-    if (tok == ID) {
-        eat(ID);
-        eat(ASSIGN);
-        ASSIGN_();
-    } else {
-        ARRAY_DECL();
+    printf ("Entering FUNC_ASSIGN\n");
+    switch (tok) {
+        case ID: eat(ID); ARRAY_DECL(); eat(ASSIGN); ASSIGN_(); break;
+        default: printf("Error at FUNC_ASSIGN\n");
+        error();
     }
+    printf ("Exiting FUNC_ASSIGN\n");
 }
 
 void ASSIGN_(void) {
-    if (tok == CINT || tok == CFLOAT || tok == CBOOL || tok == CCHAR || tok == CSTRING) {
-        eat(tok);
-    } else {
-        EXP();
-        eat(SEMICOLON);
+    printf ("Entering ASSIGN_\n");
+    switch (tok) {
+        case CCHAR: eat(CCHAR); eat(SEMICOLON); break;
+        case CSTRING: eat(CSTRING); eat(SEMICOLON); break;
+        case CARRAY: eat(CARRAY); eat(SEMICOLON); break;
+        case CINT: EXP(); eat(SEMICOLON); break;
+        case CFLOAT: EXP(); eat(SEMICOLON); break;
+        case CBOOL: EXP(); eat(SEMICOLON); break;
+        case NOT: EXP(); eat(SEMICOLON); break;
+        case ID: EXP(); eat(SEMICOLON); break;
+        case LBRACKET: EXP(); eat(SEMICOLON); break;
+        case LPAREN: EXP(); eat(SEMICOLON); break;
+        case DOT: EXP(); eat(SEMICOLON); break;
+        default: printf("Error at ASSIGN_\n");
+        error();
+
     }
+    printf ("Exiting ASSIGN_\n");
 }
 
 void ARRAY_DECL(void) {
-    eat(ID);
-    eat(LBRACKET);
-    SIZE();
-    ARRAY_DECL_();
-}
-
-void ARRAY_DECL_(void) {
-    eat(ASSIGN);
-    eat(CARRAY);
+    switch (tok) {
+        case LBRACKET: eat(LBRACKET); SIZE(); eat(RBRACKET); break;
+        case ASSIGN: break;
+        default: printf("Error at ARRAY_DECL\n");
+        error();
+    }
 }
 
 void SIZE(void) {
@@ -200,167 +211,423 @@ void SIZE(void) {
 }
 
 void REGISTER_DECL(void) {
-    eat(REGISTER);
-    TYPE();
-    eat(ID);
-    eat(SEMICOLON);
+    switch (tok) {
+        case REGISTER: eat(REGISTER); TYPE(); eat(ID); eat(SEMICOLON); break;
+        default: printf("Error at REGISTER_DECL\n");
+        error();
+    }
 }
 
 void LIT(void) {
+    printf("Entering LIT\n");
     switch (tok) {
         case CINT: eat(CINT); break;
         case CFLOAT: eat(CFLOAT); break;
         case CBOOL: eat(CBOOL); break;
-        case CCHAR: eat(CCHAR); break;
-        case CSTRING: eat(CSTRING); break;
         default: printf("Error at LIT\n");
         error();
     }
+    printf("Exiting LIT\n");
 }
 
 void O(void) {
+    printf("Entering O\n");
     switch (tok) {
         case ID: eat(ID); O_(); break;
-        case REGISTER: eat(REGISTER); eat(ID); O_(); break;
-        case LBRACKET: eat(LBRACKET); EXP(); eat(RBRACKET); O_(); break;
-        case LPAREN: eat(LPAREN); EXP(); eat(RPAREN); O_(); break;
-        case CINT: eat(CINT); break;
-        case CFLOAT: eat(CFLOAT); break;
-        case CBOOL: eat(CBOOL); break;
-        case CCHAR: eat(CCHAR); break;
-        case CSTRING: eat(CSTRING); break;
+        case CINT: LIT(); break;
+        case CFLOAT: LIT(); break;
+        case CBOOL: LIT(); break;
+        case LPAREN: O_(); break;
+        case LBRACKET: O_(); break;
+        case DOT: O_(); break;
         default: printf("Error at O\n");
         error();
     }
+    printf("Exiting O\n");
 }
 
 void O_(void) {
-    if (tok == PLUS || tok == MINUS) {
-        AU();
-    } else {
-        return;
+    printf("Entering O_\n");
+    switch (tok) {
+        case LPAREN: eat(LPAREN); EXP(); eat(RPAREN); break;
+        case LBRACKET: eat(LBRACKET); EXP(); eat(RBRACKET); break;
+        case DOT: eat(DOT); eat(ID); break;
+        default: printf("Error at O_\n");
+        error();
     }
+    printf("Exiting O_\n");
 }
 
 void AU(void) {
+    printf("Entering AU\n");
     switch (tok) {
         case PLUS: eat(PLUS); O(); break;
         case MINUS: eat(MINUS); O(); break;
+        case ID: O(); break;
+        case CINT: O(); break;
+        case CFLOAT: O(); break;
+        case CBOOL: O(); break;
+        case LPAREN: O(); break;
+        case LBRACKET: O(); break;
+        case DOT: O(); break;
         default: printf("Error at AU\n");
         error();
     }
+    printf("Exiting AU\n");
+}
+
+void OP(void) {
+    printf("Entering OP\n");
+    switch (tok) {
+        case LPAREN: eat(LPAREN); EXP(); eat(RPAREN); break;
+        case PLUS: AU(); break;
+        case MINUS: AU(); break;
+        case ID: AU(); break;
+        case CINT: AU(); break;
+        case CFLOAT: AU(); break;
+        case CBOOL: AU(); break;
+    }
+    printf("Exiting OP\n");
 }
 
 void AP(void) {
-    O();
+    printf("Entering AP\n");
+    OP();
     AP_();
+    printf("Exiting AP\n");
 }
 
 void AP_(void) {
-    if (tok == POWER) {
-        eat(POWER);
-        AP();
-    } else {
-        return;
+    switch (tok) {
+        case POWER: eat(POWER); AP(); break;
+        //*, /, +, -, <, >, <=, >=, ==, !=, and, ;, ], ), or, end, not, id, const, cint, cfloat, cbool, (, [, ., int, float, bool, char, string, register, if, switch, for, loop, exit, unless, function, procedure, :, elif, break, else
+        case MULTIPLY: break;
+        case DIVIDE: break;
+        case PLUS: break;
+        case MINUS: break;
+        case LESSTHAN: break;
+        case GREATERTHAN: break;
+        case LESSTHANOREQUAL: break;
+        case GREATERTHANOREQUAL: break;
+        case EQUALS: break;
+        case NOTEQUAL: break;
+        case AND: break;
+        case SEMICOLON: break;
+        case RBRACKET: break;
+        case RPAREN: break;
+        case OR: break;
+        case END: break;
+        case NOT: break;
+        case ID: break;
+        case CONST: break;
+        case CINT: break;
+        case CFLOAT: break;
+        case CBOOL: break;
+        case LPAREN: break;
+        case LBRACKET: break;
+        case DOT: break;
+        case INT: break;
+        case FLOAT: break;
+        case BOOL: break;
+        case CHAR: break;
+        case STRING: break;
+        case REGISTER: break;
+        case IF: break;
+        case SWITCH: break;
+        case FOR: break;
+        case LOOP: break;
+        case EXIT: break;
+        case UNLESS: break;
+        case FUNCTION: break;
+        case PROCEDURE: break;
+        case COLON: break;
+        case ELIF: break;
+        case BREAK: break;
+        case ELSE: break;
+        default: printf("Error at AP_\n");
+        error();
     }
+
 }
 
 void AF(void) {
+    printf("Entering AF\n");
     AP();
     AF_();
+    printf("Exiting AF\n");
 }
 
 void AF_(void) {
-    if (tok == MULTIPLY || tok == DIVIDE) {
-        eat(tok);
-        AP();
-        AF_();
-    } else {
-        return;
+    switch (tok) {
+        case MULTIPLY: eat(MULTIPLY); AP(); AF_(); break;
+        case DIVIDE: eat(DIVIDE); AP(); AF_(); break;
+        case PLUS: break;
+        case MINUS: break;
+        case LESSTHAN: break;
+        case GREATERTHAN: break;
+        case LESSTHANOREQUAL: break;
+        case GREATERTHANOREQUAL: break;
+        case EQUALS: break;
+        case NOTEQUAL: break;
+        case AND: break;
+        case OR: break;
+        case SEMICOLON: break;
+        case RBRACKET: break;
+        case RPAREN: break;
+        case END: break;
+        case NOT: break;
+        case ID: break;
+        case CONST: break;
+        case CINT: break;
+        case CFLOAT: break;
+        case CBOOL: break;
+        case LPAREN: break;
+        case LBRACKET: break;
+        case DOT: break;
+        case INT: break;
+        case FLOAT: break;
+        case BOOL: break;
+        case CHAR: break;
+        case STRING: break;
+        case REGISTER: break;
+        case IF: break;
+        case SWITCH: break;
+        case FOR: break;
+        case LOOP: break;
+        case EXIT: break;
+        case UNLESS: break;
+        case FUNCTION: break;
+        case PROCEDURE: break;
+        case COLON: break;
+        case ELIF: break;
+        case BREAK: break;
+        case ELSE: break;
+        default: printf("Error at AF_\n");
+        error();
     }
+
 }
 
 void AT(void) {
+    printf("Entering AT\n");
     AF();
     AT_();
+    printf("Exiting AT\n");
 }
 
 void AT_(void) {
-    if (tok == PLUS || tok == MINUS) {
-        eat(tok);
-        AF();
-        AT_();
-    } else {
-        return;
+    printf("Entering AT_\n");
+    switch (tok) {
+        case PLUS: eat(PLUS); AF(); AT_(); break;
+        case MINUS: eat(MINUS); AF(); AT_(); break;
+        case LESSTHAN: break;
+        case GREATERTHAN: break;
+        case LESSTHANOREQUAL: break;
+        case GREATERTHANOREQUAL: break;
+        case EQUALS: break;
+        case NOTEQUAL: break;
+        case AND: break;
+        case OR: break;
+        case SEMICOLON: break;
+        case RBRACKET: break;
+        case RPAREN: break;
+        case END: break;
+        case NOT: break;
+        case ID: break;
+        case CONST: break;
+        case CINT: break;
+        case CFLOAT: break;
+        case CBOOL: break;
+        case LPAREN: break;
+        case LBRACKET: break;
+        case DOT: break;
+        case INT: break;
+        case FLOAT: break;
+        case BOOL: break;
+        case CHAR: break;
+        case STRING: break;
+        case REGISTER: break;
+        case IF: break;
+        case SWITCH: break;
+        case FOR: break;
+        case LOOP: break;
+        case EXIT: break;
+        case UNLESS: break;
+        case FUNCTION: break;
+        case PROCEDURE: break;
+        case COLON: break;
+        case ELIF: break;
+        case BREAK: break;
+        case ELSE: break;
+        default: printf("Error at AT_\n");
+        error();
     }
+    printf("Exiting AT_\n");
 }
 
 void R(void) {
+    printf("Entering R\n");
     AT();
     R_();
+    printf("Exiting R\n");
 }
 
 void R_(void) {
-    if (tok == EQUALS || tok == NOTEQUAL || tok == LESSTHAN || tok == GREATERTHAN || tok == LESSTHANOREQUAL || tok == GREATERTHANOREQUAL) {
-        eat(tok);
-        AT();
-        R_();
-    } else {
-        return;
+    printf("Entering R_\n");
+    switch (tok) {
+        case LESSTHAN: eat(LESSTHAN); AT(); break;
+        case GREATERTHAN: eat(GREATERTHAN); AT(); break;
+        case LESSTHANOREQUAL: eat(LESSTHANOREQUAL); AT(); break;
+        case GREATERTHANOREQUAL: eat(GREATERTHANOREQUAL); AT(); break;
+        case EQUALS: eat(EQUALS); AT(); break;
+        case NOTEQUAL: eat(NOTEQUAL); AT(); break;
+        case AND: break;
+        case OR: break;
+        case SEMICOLON: break;
+        case RBRACKET: break;
+        case RPAREN: break;
+        case END: break;
+        case NOT: break;
+        case ID: break;
+        case CONST: break;
+        case CINT: break;
+        case CFLOAT: break;
+        case CBOOL: break;
+        case LPAREN: break;
+        case LBRACKET: break;
+        case DOT: break;
+        case INT: break;
+        case FLOAT: break;
+        case BOOL: break;
+        case CHAR: break;
+        case STRING: break;
+        case REGISTER: break;
+        case IF: break;
+        case SWITCH: break;
+        case FOR: break;
+        case LOOP: break;
+        case EXIT: break;
+        case UNLESS: break;
+        case FUNCTION: break;
+        case PROCEDURE: break;
+        case COLON: break;
+        case ELIF: break;
+        case BREAK: break;
+        case ELSE: break;
+        default: printf("Error at R_\n");
+        error();
     }
+    printf("Exiting R_\n");
 }
 
 void LU(void) {
-    if (tok == NOT) {
-        eat(NOT);
-        R();
-    } else {
-        R();
+    printf("Entering LU\n");
+    switch (tok) {
+        case NOT: eat(NOT); R(); break;
+        case ID: R(); break;
+        case CONST: R(); break;
+        case CINT: R(); break;
+        case CFLOAT: R(); break;
+        case CBOOL: R(); break;
+        case LPAREN: R(); break;
+        case LBRACKET: R(); break;
+        case DOT: R(); break;
+        default: printf("Error at LU\n");
+        error();
     }
+    printf("Exiting LU\n");
 }
 
 void LC(void) {
+    printf("Entering LC\n");
     LU();
     LC_();
+    printf("Exiting LC\n");
 }
 
 void LC_(void) {
-    if (tok == AND) {
-        eat(AND);
-        LU();
-        LC_();
-    } else {
-        return;
+    switch (tok) {
+        case AND: eat(AND); LU(); LC_(); break;
+        case OR: break;
+        case SEMICOLON: break;
+        case RBRACKET: break;
+        case RPAREN: break;
+        case END: break;
+        case NOT: break;
+        case ID: break;
+        case CONST: break;
+        case CINT: break;
+        case CFLOAT: break;
+        case CBOOL: break;
+        case LPAREN: break;
+        case LBRACKET: break;
+        case DOT: break;
+        case INT: break;
+        case FLOAT: break;
+        case BOOL: break;
+        case CHAR: break;
+        case STRING: break;
+        case REGISTER: break;
+        case IF: break;
+        case SWITCH: break;
+        case FOR: break;
+        case LOOP: break;
+        case EXIT: break;
+        case UNLESS: break;
+        case FUNCTION: break;
+        case PROCEDURE: break;
+        case COLON: break;
+        case ELIF: break;
+        case BREAK: break;
+        case ELSE: break;
+        default: printf("Error at LC_\n");
+        error();
     }
 }
 
 void EXP(void) {
+    printf("Entering EXP\n");
     LC();
     EXP_();
+    printf("Exiting EXP\n");
 }
 
 void EXP_(void) {
-    if (tok == OR) {
-        eat(OR);
-        LC();
-        EXP_();
-    } else {
-        return;
-    }
-}
-
-void EXPS(void) {
-    EXP();
-    eat(SEMICOLON);
-    EXPS_();
-}
-
-void EXPS_(void) {
-    if (tok == SEMICOLON) {
-        eat(SEMICOLON);
-        EXPS_();
-    } else {
-        return;
+    switch (tok) {
+        case OR: eat(OR); LC(); EXP_(); break;
+        case SEMICOLON: break;
+        case RBRACKET: break;
+        case RPAREN: break;
+        case END: break;
+        case NOT: break;
+        case ID: break;
+        case CONST: break;
+        case CINT: break;
+        case CFLOAT: break;
+        case CBOOL: break;
+        case LPAREN: break;
+        case LBRACKET: break;
+        case DOT: break;
+        case INT: break;
+        case FLOAT: break;
+        case BOOL: break;
+        case CHAR: break;
+        case STRING: break;
+        case REGISTER: break;
+        case IF: break;
+        case SWITCH: break;
+        case FOR: break;
+        case LOOP: break;
+        case EXIT: break;
+        case UNLESS: break;
+        case FUNCTION: break;
+        case PROCEDURE: break;
+        case COLON: break;
+        case ELIF: break;
+        case BREAK: break;
+        case ELSE: break;
+        default: printf("Error at EXP_\n");
+        error();
     }
 }
 
@@ -371,50 +638,67 @@ void ARGS(void) {
 }
 
 void ARGS_(void) {
-    if (tok == COMMA) {
-        eat(COMMA);
-        ARGS();
-    } else {
-        return;
+    switch (tok) {
+        case COMMA: eat(COMMA); ARGS(); break;
+        case RPAREN: break;
+        default: printf("Error at ARGS_\n");
+        error();
     }
 }
 
 void FUNC_IF(void) {
+    printf("Entering FUNC_IF\n");
     eat(IF);
     EXP();
-    STMTS();
-    FUNC_ELIF();
+    STMTS_();
+    FUNC_ELIF_();
     FUNC_ELSE();
     eat(END);
     eat(IF);
+    printf("Exiting FUNC_IF\n");
+}
+
+void FUNC_ELIF_(void) {
+    switch (tok)
+    {
+    case ELIF: FUNC_ELIF(); break;
+    case END: break;
+    case ELSE: break;
+    default: printf("Error at FUNC_ELIF_\n");
+    error();
+    }
 }
 
 void FUNC_ELIF(void) {
-    if (tok == ELIF) {
-        eat(ELIF);
-        EXP();
-        STMTS();
-    } else {
-        return;
+    switch (tok)
+    { 
+        case ELIF: eat(ELIF); EXP(); STMTS(); FUNC_ELIF(); break;
+        default : printf("Error at FUNC_ELIF\n");
+        error();
     }
 }
 
 void FUNC_ELSE(void) {
-    if (tok == ELSE) {
-        eat(ELSE);
-        STMTS();
-    } else {
-        return;
+    switch (tok)
+    {
+        case ELSE: eat(ELSE); STMTS(); break;
+        case END: break;
+        default: printf("Error at FUNC_ELSE\n");
+        error();
     }
 }
 
 void FUNC_SWITCH(void) {
+    printf("Entering FUNC_SWITCH\n");
     eat(SWITCH);
+    eat(LPAREN);
     VAR();
+    eat(RPAREN);
     FUNC_CASE();
     FUNC_DEFAULT();
     eat(END);
     eat(SWITCH);
+    printf("Exiting FUNC_SWITCH\n");
 }
 
 void FUNC_CASE(void) {
@@ -423,59 +707,63 @@ void FUNC_CASE(void) {
     eat(COLON);
     STMTS();
     eat(BREAK);
+    eat(SEMICOLON);
     CASE_();
 }
 
 void CASE_(void) {
-    if (tok == CASE) {
-        FUNC_CASE();
-    } else {
-        return;
+    switch (tok) {
+        case CASE: FUNC_CASE(); break;
+        case DEFAULT: break;
+        case END: break;
+        default: printf("Error at CASE_\n");
+        error();
     }
 }
 
 void FUNC_DEFAULT(void) {
-    if (tok == DEFAULT) {
-        eat(DEFAULT);
-        eat(COLON);
-        STMTS();
-        eat(BREAK);
-    } else {
-        return;
+    switch (tok) {
+        case DEFAULT: eat(DEFAULT); eat(COLON); STMTS(); eat(BREAK); eat(SEMICOLON); break;
+        case END: break;
+        default: printf("Error at FUNC_DEFAULT\n");
+        error();
     }
 }
 
 void FUNC_FOR(void) {
+    printf("Entering FUNC_FOR\n");
     eat(FOR);
+    eat(LPAREN);
     FUNC_ASSIGN();
     eat(SEMICOLON);
     EXP();
     eat(SEMICOLON);
     EXP();
-    STMTS();
+    eat(RPAREN);
+    STMTS_();
     eat(END);
     eat(FOR);
+    printf("Exiting FUNC_FOR\n");
 }
 
 void FUNC_LOOP(void) {
+    printf("Entering FUNC_LOOP\n");
     eat(LOOP);
-    STMTS();
+    STMTS_();
     eat(END);
     eat(LOOP);
+    printf("Exiting FUNC_LOOP\n");
 }
 
 void FUNC_WHEN(void) {
+    eat(EXIT);
     eat(WHEN);
-    eat(LPAREN);
     EXP();
-    eat(RPAREN);
 }
 
 void FUNC_UNLESS(void) {
     eat(UNLESS);
-    eat(LPAREN);
     EXP();
-    eat(RPAREN);
     eat(DO);
     STMT();
 }
@@ -483,26 +771,55 @@ void FUNC_UNLESS(void) {
 void FUNC_PRINT(void) {
     eat(PRINT);
     eat(LPAREN);
-    EXP();
+    ASSIGN_();
     eat(RPAREN);
     eat(SEMICOLON);
 }
 
 void STMTS(void) {
+    printf("Entering STMTS\n");
     STMT();
     STMTS_();
+    printf("Exiting STMTS\n");
 }
 
 void STMTS_(void) {
-    if (tok == SEMICOLON) {
-        eat(SEMICOLON);
-        STMTS();
-    } else {
-        return;
+    printf("Entering STMTS_\n");
+    switch (tok) {
+        case ID: STMTS(); break;
+        case LPAREN: STMTS(); break;
+        case CINT: STMTS(); break;
+        case CFLOAT: STMTS(); break;
+        case CBOOL: STMTS(); break;
+        case CONST: STMTS(); break;
+        case REGISTER: STMTS(); break;
+        case INT: STMTS(); break;
+        case FLOAT: STMTS(); break;
+        case BOOL: STMTS(); break;
+        case CHAR: STMTS(); break;
+        case STRING: STMTS(); break;
+        case FUNCTION: STMTS(); break;
+        case PROCEDURE: STMTS(); break;
+        case IF: STMTS(); break;
+        case SWITCH: STMTS(); break;
+        case FOR: STMTS(); break;
+        case LOOP: STMTS(); break;
+        case WHEN: STMTS(); break;
+        case UNLESS: STMTS(); break;
+        case PRINT: STMTS(); break;
+        case END: break;
+        case ELSE: break;
+        case ELIF: break;
+        case BREAK: break;
+        default: printf("Error at STMTS_\n");
+        error();
     }
+    printf("Exiting STMTS_\n");
+
 }
 
 void STMT(void) {
+    printf("Entering STMT\n");
     switch (tok) {
         case ID: EXP(); break;
         case LPAREN: EXP(); break;
@@ -528,22 +845,54 @@ void STMT(void) {
         default: printf("Error at STMT\n");
         error();
     }
+    printf("Exiting STMT\n");
+}
+
+void FUNC_FUNCTION(void) {
+    printf("Entering FUNC_FUNCTION\n");
+    eat(FUNCTION);
+    TYPE();
+    eat(ID);
+    eat(LPAREN);
+    ARGS();
+    eat(RPAREN);
+    eat(BEGIN);
+    STMTS();
+    eat(END);
+    eat(ID);
+    printf("Exiting FUNC_FUNCTION\n");
+} 
+
+void FUNC_PROCEDURE(void) {
+    printf("Entering FUNC_PROCEDURE\n");
+    eat(PROCEDURE);
+    eat(ID);
+    eat(LPAREN);
+    ARGS();
+    eat(RPAREN);
+    eat(BEGIN);
+    STMTS();
+    eat(END);
+    eat(ID);
+    printf("Exiting FUNC_PROCEDURE\n");
 }
 
 void SUBPROGRAM(void) {
     switch (tok) {
-        case FUNCTION: eat(FUNCTION); TYPE(); eat(ID); eat(LPAREN); ARGS(); eat(RPAREN); eat(BEGIN); STMTS(); eat(END); eat(ID); break;
-        case PROCEDURE: eat(PROCEDURE); eat(ID); eat(LPAREN); ARGS(); eat(RPAREN); eat(BEGIN); STMTS(); eat(END); eat(ID); break;
+        case FUNCTION: FUNC_FUNCTION(); break;
+        case PROCEDURE: FUNC_PROCEDURE(); break;
         default: printf("Error at SUBPROGRAM\n");
         error();
     }
-}
+}  
 
 void SUBPROGRAMS_(void) {
-    if (tok == FUNCTION || tok == PROCEDURE) {
-        SUBPROGRAMS();
-    } else {
-        return;
+    switch (tok) {
+        case FUNCTION: SUBPROGRAM(); SUBPROGRAMS_(); break;
+        case PROCEDURE: SUBPROGRAM(); SUBPROGRAMS_(); break;
+        case MAIN: break;
+        default: printf("Error at SUBPROGRAMS_\n");
+        error();
     }
 }
 
@@ -564,6 +913,7 @@ void FUNC_PROGRAM(void) {
     FUNC_MAIN();
     eat(BEGIN);
     STMTS();
+    printf("Expecting end for program\n");
     eat(END);
     eat(PROGRAM);
 }

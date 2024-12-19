@@ -1,7 +1,7 @@
 /*Grammar
 
 PROGRAM ::= SUBPROGRAMS' MAIN begin STMTS end program
-MAIN ::= main ( ARGS' )
+MAIN ::= main ( EXP )
 VAR ::= const TYPE ASSIGN
 VAR ::= TYPE ASSIGN
 VAR ::= REGISTER_DECL
@@ -17,7 +17,7 @@ ASSIGN' ::= cchar ;
 ASSIGN' ::= cstring ;
 ASSIGN' ::= carray ;
 
-ARRAY_DECL ::= [ SIZE ]
+ARRAY_DECL ::= [ SIZE ] ARRAY_DECL
 ARRAY_DECL ::= ''
 SIZE ::= EXP
 
@@ -26,28 +26,32 @@ REGISTER_DECL ::= register TYPE id ;
 LIT ::= cint
 LIT ::= cfloat
 LIT ::= cbool
+O ::= LIT
 O ::= id O'
-O :: O'
-O ::= LIT 
-O' ::= ( EXP )
-O' ::= [ EXP ]
-O' ::= . id
+O ::= call id ( EXPS' )
+O' ::= . id O'
+O' ::= [ EXP ] O'
 O' ::= ''
 
 
-AU ::= + O 
-AU ::= - O 
+
+AU ::= + O
+AU ::= - O
 AU ::= O
-AP ::= O AP'
+
+OP ::= AU
+OP ::= ( EXP )
+
+AP ::= OP AP'
 AP' ::= ^ AP 
 AP' ::= ''
 AF ::= AP AF'
-AF' ::= * AP AF' 
-AF' ::= / AP AF' 
+AF' ::= * AF 
+AF' ::= / AF
 AF' ::= ''
 AT ::= AF AT'
-AT' ::= + AF AT' 
-AT' ::= - AF AT' 
+AT' ::= + AT
+AT' ::= - AT
 AT' ::= ''
 R ::= AT R'
 R' ::= < AT
@@ -65,14 +69,18 @@ LC' ::= ''
 EXP ::= LC EXP'
 EXP' ::= or LC EXP' 
 EXP' ::= ''
+EXPS ::= EXP , EXPS'
+EXPS' ::= EXPS
+EXPS' ::= ''
 ARGS ::= TYPE id ARGS' 
 ARGS' ::= , ARGS  
 ARGS' ::= '' 
 STMTS ::= STMT STMTS'  
 STMTS' ::= STMTS 
 STMTS' ::= '' 
-STMT ::= EXP
 STMT ::= VAR
+STMT ::= ASSIGN
+STMT ::= call id ( EXPS' ) ;
 STMT ::= SUBPROGRAM
 STMT ::= IF
 STMT ::= SWITCH
@@ -88,8 +96,8 @@ SUBPROGRAM ::= FUNCTION
 SUBPROGRAM ::= PROCEDURE 
 FUNCTION ::= function TYPE id ( ARGS' ) begin STMTS end id 
 PROCEDURE ::= procedure id ( ARGS' ) begin STMTS end id 
-IF ::= if ( EXP ) STMTS' ELIF' ELSE end if 
-ELIF ::= elif ( EXP ) STMTS' ELIF'
+IF ::= if  EXP  STMTS' ELIF' ELSE end if 
+ELIF ::= elif  EXP  STMTS' ELIF'
 ELIF' ::= '' 
 ELIF' ::= ELIF
 ELSE ::= else STMTS'
@@ -102,9 +110,13 @@ DEFAULT ::= default : STMTS' break ;
 DEFAULT ::= '' 
 FOR ::= for ( ASSIGN ; EXP ; EXP ) STMTS' end for 
 LOOP ::= loop STMTS end loop
-WHEN ::= exit when ( EXP )
-UNLESS ::= unless ( EXP ) do STMT
-PRINT ::= print ( ASSIGN' ) ;
+WHEN ::= exit when  EXP 
+UNLESS ::= unless  EXP  do STMT
+PRINT ::= print ( PRINT' ) ;
+PRINT' ::= EXP
+PRINT' ::= cchar
+PRINT' ::= cstring
+PRINT' ::= carray
 
 */
 
@@ -179,6 +191,7 @@ void FUNC_ASSIGN(void) {
 void ASSIGN_(void) {
     printf ("Entering ASSIGN_\n");
     switch (tok) {
+        //cchar, cstring, carray, not, +, -, cint, cfloat, cbool, id, call, (	
         case CCHAR: eat(CCHAR); eat(SEMICOLON); break;
         case CSTRING: eat(CSTRING); eat(SEMICOLON); break;
         case CARRAY: eat(CARRAY); eat(SEMICOLON); break;
@@ -190,6 +203,9 @@ void ASSIGN_(void) {
         case LBRACKET: EXP(); eat(SEMICOLON); break;
         case LPAREN: EXP(); eat(SEMICOLON); break;
         case DOT: EXP(); eat(SEMICOLON); break;
+        case CALL: EXP(); eat(SEMICOLON); break;
+        case PLUS: EXP(); eat(SEMICOLON); break;
+        case MINUS: EXP(); eat(SEMICOLON); break;
         default: printf("Error at ASSIGN_\n");
         error();
 
@@ -233,13 +249,12 @@ void LIT(void) {
 void O(void) {
     printf("Entering O\n");
     switch (tok) {
+        //cint, cfloat, cbool, id, call	
         case ID: eat(ID); O_(); break;
         case CINT: LIT(); break;
         case CFLOAT: LIT(); break;
         case CBOOL: LIT(); break;
-        case LPAREN: O_(); break;
-        case LBRACKET: O_(); break;
-        case DOT: O_(); break;
+        case CALL: eat(CALL); eat(ID); eat(LPAREN); EXPS_(); eat(RPAREN); break;
         default: printf("Error at O\n");
         error();
     }
@@ -249,9 +264,51 @@ void O(void) {
 void O_(void) {
     printf("Entering O_\n");
     switch (tok) {
-        case LPAREN: eat(LPAREN); EXP(); eat(RPAREN); break;
+        //., [	
         case LBRACKET: eat(LBRACKET); EXP(); eat(RBRACKET); break;
         case DOT: eat(DOT); eat(ID); break;
+        //^, *, /, +, -, <, >, <=, >=, ==, !=, and, ), ;, ], or, ,, end, else, elif, const, id, call, int, float, bool, char, string, register, if, switch, for, loop, exit, unless, print, function, procedure, :, do, break
+        case POWER: break;
+        case MULTIPLY: break;
+        case DIVIDE: break;
+        case PLUS: break;
+        case MINUS: break;
+        case LESSTHAN: break;
+        case GREATERTHAN: break;
+        case LESSTHANOREQUAL: break;
+        case GREATERTHANOREQUAL: break;
+        case EQUALS: break;
+        case NOTEQUAL: break;
+        case AND: break;
+        case RPAREN: break;
+        case SEMICOLON: break;
+        case RBRACKET: break;
+        case OR: break;
+        case COMMA: break;
+        case END: break;
+        case ELSE: break;
+        case ELIF: break;
+        case CONST: break;
+        case ID: break;
+        case CALL: break;
+        case INT: break;
+        case FLOAT: break;
+        case BOOL: break;
+        case CHAR: break;
+        case STRING: break;
+        case REGISTER: break;
+        case IF: break;
+        case SWITCH: break;
+        case FOR: break;
+        case LOOP: break;
+        case EXIT: break;
+        case UNLESS: break;
+        case PRINT: break;
+        case FUNCTION: break;
+        case PROCEDURE: break;
+        case COLON: break;
+        case DO: break;
+        case BREAK: break;
         default: printf("Error at O_\n");
         error();
     }
@@ -261,15 +318,14 @@ void O_(void) {
 void AU(void) {
     printf("Entering AU\n");
     switch (tok) {
+        //+, -, cint, cfloat, cbool, id, call	
         case PLUS: eat(PLUS); O(); break;
         case MINUS: eat(MINUS); O(); break;
         case ID: O(); break;
         case CINT: O(); break;
         case CFLOAT: O(); break;
         case CBOOL: O(); break;
-        case LPAREN: O(); break;
-        case LBRACKET: O(); break;
-        case DOT: O(); break;
+        case CALL: O(); break;
         default: printf("Error at AU\n");
         error();
     }
@@ -279,6 +335,7 @@ void AU(void) {
 void OP(void) {
     printf("Entering OP\n");
     switch (tok) {
+        //+, -, cint, cfloat, cbool, id, call, (	
         case LPAREN: eat(LPAREN); EXP(); eat(RPAREN); break;
         case PLUS: AU(); break;
         case MINUS: AU(); break;
@@ -286,21 +343,26 @@ void OP(void) {
         case CINT: AU(); break;
         case CFLOAT: AU(); break;
         case CBOOL: AU(); break;
+        case CALL: AU(); break;
     }
     printf("Exiting OP\n");
 }
 
 void AP(void) {
-    printf("Entering AP\n");
     OP();
     AP_();
     printf("Exiting AP\n");
 }
 
+/*
+AP' ::= ^ AP 
+AP' ::= ''
+*/
+
 void AP_(void) {
     switch (tok) {
         case POWER: eat(POWER); AP(); break;
-        //*, /, +, -, <, >, <=, >=, ==, !=, and, ;, ], ), or, end, not, id, const, cint, cfloat, cbool, (, [, ., int, float, bool, char, string, register, if, switch, for, loop, exit, unless, function, procedure, :, elif, break, else
+        // *, /, +, -, <, >, <=, >=, ==, !=, and, ), ;, ], or, ,, end, else, elif, const, id, call, int, float, bool, char, string, register, if, switch, for, loop, exit, unless, print, function, procedure, :, do, break
         case MULTIPLY: break;
         case DIVIDE: break;
         case PLUS: break;
@@ -317,15 +379,8 @@ void AP_(void) {
         case RPAREN: break;
         case OR: break;
         case END: break;
-        case NOT: break;
         case ID: break;
         case CONST: break;
-        case CINT: break;
-        case CFLOAT: break;
-        case CBOOL: break;
-        case LPAREN: break;
-        case LBRACKET: break;
-        case DOT: break;
         case INT: break;
         case FLOAT: break;
         case BOOL: break;
@@ -344,6 +399,10 @@ void AP_(void) {
         case ELIF: break;
         case BREAK: break;
         case ELSE: break;
+        case COMMA: break;
+        case CALL: break;
+        case PRINT: break;
+        case DO: break;
         default: printf("Error at AP_\n");
         error();
     }
@@ -357,10 +416,17 @@ void AF(void) {
     printf("Exiting AF\n");
 }
 
+/*
+AF' ::= * AF 
+AF' ::= / AF
+AF' ::= ''
+*/
+
 void AF_(void) {
     switch (tok) {
-        case MULTIPLY: eat(MULTIPLY); AP(); AF_(); break;
-        case DIVIDE: eat(DIVIDE); AP(); AF_(); break;
+        case MULTIPLY: eat(MULTIPLY); AF(); break;
+        case DIVIDE: eat(DIVIDE); AF(); break;
+        //+, -, <, >, <=, >=, ==, !=, and, ), ;, ], or, ,, end, else, elif, const, id, call, int, float, bool, char, string, register, if, switch, for, loop, exit, unless, print, function, procedure, :, do, break
         case PLUS: break;
         case MINUS: break;
         case LESSTHAN: break;
@@ -370,20 +436,13 @@ void AF_(void) {
         case EQUALS: break;
         case NOTEQUAL: break;
         case AND: break;
-        case OR: break;
         case SEMICOLON: break;
         case RBRACKET: break;
         case RPAREN: break;
+        case OR: break;
         case END: break;
-        case NOT: break;
         case ID: break;
         case CONST: break;
-        case CINT: break;
-        case CFLOAT: break;
-        case CBOOL: break;
-        case LPAREN: break;
-        case LBRACKET: break;
-        case DOT: break;
         case INT: break;
         case FLOAT: break;
         case BOOL: break;
@@ -402,6 +461,10 @@ void AF_(void) {
         case ELIF: break;
         case BREAK: break;
         case ELSE: break;
+        case COMMA: break;
+        case CALL: break;
+        case PRINT: break;
+        case DO: break;
         default: printf("Error at AF_\n");
         error();
     }
@@ -415,11 +478,18 @@ void AT(void) {
     printf("Exiting AT\n");
 }
 
+/*
+AT' ::= + AT
+AT' ::= - AT
+AT' ::= ''
+*/
+
 void AT_(void) {
     printf("Entering AT_\n");
     switch (tok) {
-        case PLUS: eat(PLUS); AF(); AT_(); break;
-        case MINUS: eat(MINUS); AF(); AT_(); break;
+        case PLUS: eat(PLUS); AT(); break;
+        case MINUS: eat(MINUS); AT(); break;
+        //<, >, <=, >=, ==, !=, and, ), ;, ], or, ,, end, else, elif, const, id, call, int, float, bool, char, string, register, if, switch, for, loop, exit, unless, print, function, procedure, :, do, break
         case LESSTHAN: break;
         case GREATERTHAN: break;
         case LESSTHANOREQUAL: break;
@@ -427,20 +497,13 @@ void AT_(void) {
         case EQUALS: break;
         case NOTEQUAL: break;
         case AND: break;
-        case OR: break;
         case SEMICOLON: break;
         case RBRACKET: break;
         case RPAREN: break;
+        case OR: break;
         case END: break;
-        case NOT: break;
         case ID: break;
         case CONST: break;
-        case CINT: break;
-        case CFLOAT: break;
-        case CBOOL: break;
-        case LPAREN: break;
-        case LBRACKET: break;
-        case DOT: break;
         case INT: break;
         case FLOAT: break;
         case BOOL: break;
@@ -459,6 +522,10 @@ void AT_(void) {
         case ELIF: break;
         case BREAK: break;
         case ELSE: break;
+        case COMMA: break;
+        case CALL: break;
+        case PRINT: break;
+        case DO: break;
         default: printf("Error at AT_\n");
         error();
     }
@@ -481,21 +548,15 @@ void R_(void) {
         case GREATERTHANOREQUAL: eat(GREATERTHANOREQUAL); AT(); break;
         case EQUALS: eat(EQUALS); AT(); break;
         case NOTEQUAL: eat(NOTEQUAL); AT(); break;
+        //and, ), ;, ], or, ,, end, else, elif, const, id, call, int, float, bool, char, string, register, if, switch, for, loop, exit, unless, print, function, procedure, :, do, break
         case AND: break;
-        case OR: break;
         case SEMICOLON: break;
         case RBRACKET: break;
         case RPAREN: break;
+        case OR: break;
         case END: break;
-        case NOT: break;
         case ID: break;
         case CONST: break;
-        case CINT: break;
-        case CFLOAT: break;
-        case CBOOL: break;
-        case LPAREN: break;
-        case LBRACKET: break;
-        case DOT: break;
         case INT: break;
         case FLOAT: break;
         case BOOL: break;
@@ -514,6 +575,10 @@ void R_(void) {
         case ELIF: break;
         case BREAK: break;
         case ELSE: break;
+        case COMMA: break;
+        case CALL: break;
+        case PRINT: break;
+        case DO: break;
         default: printf("Error at R_\n");
         error();
     }
@@ -523,15 +588,16 @@ void R_(void) {
 void LU(void) {
     printf("Entering LU\n");
     switch (tok) {
+        //not, +, -, cint, cfloat, cbool, id, call, (
         case NOT: eat(NOT); R(); break;
-        case ID: R(); break;
-        case CONST: R(); break;
+        case PLUS: R(); break;
+        case MINUS: R(); break;
         case CINT: R(); break;
         case CFLOAT: R(); break;
         case CBOOL: R(); break;
+        case ID: R(); break;
+        case CALL: R(); break;
         case LPAREN: R(); break;
-        case LBRACKET: R(); break;
-        case DOT: R(); break;
         default: printf("Error at LU\n");
         error();
     }
@@ -545,23 +611,22 @@ void LC(void) {
     printf("Exiting LC\n");
 }
 
+/*
+LC' ::= and LU LC' 
+LC' ::= ''
+*/
+
 void LC_(void) {
     switch (tok) {
         case AND: eat(AND); LU(); LC_(); break;
-        case OR: break;
+        //), ;, ], or, ,, end, else, elif, const, id, call, int, float, bool, char, string, register, if, switch, for, loop, exit, unless, print, function, procedure, :, do, break
         case SEMICOLON: break;
         case RBRACKET: break;
         case RPAREN: break;
+        case OR: break;
         case END: break;
-        case NOT: break;
         case ID: break;
         case CONST: break;
-        case CINT: break;
-        case CFLOAT: break;
-        case CBOOL: break;
-        case LPAREN: break;
-        case LBRACKET: break;
-        case DOT: break;
         case INT: break;
         case FLOAT: break;
         case BOOL: break;
@@ -580,6 +645,10 @@ void LC_(void) {
         case ELIF: break;
         case BREAK: break;
         case ELSE: break;
+        case COMMA: break;
+        case CALL: break;
+        case PRINT: break;
+        case DO: break;
         default: printf("Error at LC_\n");
         error();
     }
@@ -592,22 +661,21 @@ void EXP(void) {
     printf("Exiting EXP\n");
 }
 
+/*
+EXP' ::= or LC EXP' 
+EXP' ::= ''
+*/
+
 void EXP_(void) {
     switch (tok) {
         case OR: eat(OR); LC(); EXP_(); break;
+        //), ;, ], ,, end, else, elif, const, id, call, int, float, bool, char, string, register, if, switch, for, loop, exit, unless, print, function, procedure, :, do, break
         case SEMICOLON: break;
         case RBRACKET: break;
         case RPAREN: break;
         case END: break;
-        case NOT: break;
         case ID: break;
         case CONST: break;
-        case CINT: break;
-        case CFLOAT: break;
-        case CBOOL: break;
-        case LPAREN: break;
-        case LBRACKET: break;
-        case DOT: break;
         case INT: break;
         case FLOAT: break;
         case BOOL: break;
@@ -626,7 +694,43 @@ void EXP_(void) {
         case ELIF: break;
         case BREAK: break;
         case ELSE: break;
+        case COMMA: break;
+        case CALL: break;
+        case PRINT: break;
+        case DO: break;
         default: printf("Error at EXP_\n");
+        error();
+    }
+}
+
+/*
+EXPS ::= EXP , EXPS'
+EXPS' ::= EXPS
+EXPS' ::= ''
+*/
+
+void EXPS(void) {
+    EXP();
+    eat(COMMA);
+    EXPS_();
+}
+
+void EXPS_(void) {
+    switch (tok) {
+        //not, +, -, cint, cfloat, cbool, id, call, (
+        case COMMA: EXPS(); break;
+        case NOT: EXPS(); break;
+        case PLUS: EXPS(); break;
+        case MINUS: EXPS(); break;
+        case CINT: EXPS(); break;
+        case CFLOAT: EXPS(); break;
+        case CBOOL: EXPS(); break;
+        case ID: EXPS(); break;
+        case CALL: EXPS(); break;
+        case LPAREN: EXPS(); break;
+        //)
+        case RPAREN: break;
+        default: printf("Error at EXPS_\n");
         error();
     }
 }
@@ -768,12 +872,41 @@ void FUNC_UNLESS(void) {
     STMT();
 }
 
+/*
+PRINT ::= print ( PRINT' ) ;
+PRINT' ::= EXP
+PRINT' ::= cchar
+PRINT' ::= cstring
+PRINT' ::= carray
+*/
+
 void FUNC_PRINT(void) {
+    printf("Entering FUNC_PRINT\n");
     eat(PRINT);
     eat(LPAREN);
-    ASSIGN_();
+    PRINT_();
     eat(RPAREN);
+    printf("Ate RPAREN\n");
     eat(SEMICOLON);
+    printf("Exiting FUNC_PRINT\n");
+}
+
+void PRINT_(void) {
+    switch (tok) {
+        //not, +, -, cint, cfloat, cbool, id, call, (, cchar, cstring, carray	
+        case NOT: EXP(); break;
+        case CINT: EXP(); break;
+        case CFLOAT: EXP(); break;
+        case CBOOL: EXP(); break;
+        case ID: EXP(); break;
+        case CALL: EXP(); break;
+        case LPAREN: EXP(); break;
+        case CCHAR: eat(CCHAR); break;
+        case CSTRING: eat(CSTRING); break;
+        case CARRAY: eat(CARRAY); break;
+        default: printf("Error at PRINT_\n");
+        error();
+    }
 }
 
 void STMTS(void) {
@@ -783,30 +916,34 @@ void STMTS(void) {
     printf("Exiting STMTS\n");
 }
 
+/*
+STMTS' ::= STMTS 
+STMTS' ::= '' 
+*/
+
 void STMTS_(void) {
     printf("Entering STMTS_\n");
     switch (tok) {
-        case ID: STMTS(); break;
-        case LPAREN: STMTS(); break;
-        case CINT: STMTS(); break;
-        case CFLOAT: STMTS(); break;
-        case CBOOL: STMTS(); break;
+        //const, id, call, int, float, bool, char, string, register, if, switch, for, loop, exit, unless, print, function, procedure
         case CONST: STMTS(); break;
-        case REGISTER: STMTS(); break;
+        case ID: STMTS(); break;
+        case CALL: STMTS(); break;
         case INT: STMTS(); break;
         case FLOAT: STMTS(); break;
         case BOOL: STMTS(); break;
         case CHAR: STMTS(); break;
         case STRING: STMTS(); break;
-        case FUNCTION: STMTS(); break;
-        case PROCEDURE: STMTS(); break;
+        case REGISTER: STMTS(); break;
         case IF: STMTS(); break;
         case SWITCH: STMTS(); break;
         case FOR: STMTS(); break;
         case LOOP: STMTS(); break;
-        case WHEN: STMTS(); break;
+        case EXIT: STMTS(); break;
         case UNLESS: STMTS(); break;
         case PRINT: STMTS(); break;
+        case FUNCTION: STMTS(); break;
+        case PROCEDURE: STMTS(); break;
+        //end, else, elif, break
         case END: break;
         case ELSE: break;
         case ELIF: break;
@@ -818,30 +955,42 @@ void STMTS_(void) {
 
 }
 
+/*
+STMT ::= VAR
+STMT ::= ASSIGN
+STMT ::= call id ( EXPS' ) ;
+STMT ::= SUBPROGRAM
+STMT ::= IF
+STMT ::= SWITCH
+STMT ::= FOR
+STMT ::= LOOP
+STMT ::= WHEN
+STMT ::= UNLESS
+STMT ::= PRINT
+*/
+
 void STMT(void) {
     printf("Entering STMT\n");
     switch (tok) {
-        case ID: EXP(); break;
-        case LPAREN: EXP(); break;
-        case CINT: EXP(); break;
-        case CFLOAT: EXP(); break;
-        case CBOOL: EXP(); break;
+        //const, id, call, int, float, bool, char, string, register, if, switch, for, loop, exit, unless, print, function, procedure
         case CONST: VAR(); break;
-        case REGISTER: VAR(); break;
+        case ID: FUNC_ASSIGN(); break;
+        case CALL: eat(CALL); eat(ID); eat(LPAREN); EXPS_(); eat(RPAREN); eat(SEMICOLON); break;
         case INT: VAR(); break;
         case FLOAT: VAR(); break;
         case BOOL: VAR(); break;
         case CHAR: VAR(); break;
         case STRING: VAR(); break;
-        case FUNCTION: SUBPROGRAM(); break;
-        case PROCEDURE: SUBPROGRAM(); break;
+        case REGISTER: VAR(); break;
         case IF: FUNC_IF(); break;
         case SWITCH: FUNC_SWITCH(); break;
         case FOR: FUNC_FOR(); break;
         case LOOP: FUNC_LOOP(); break;
-        case WHEN: FUNC_WHEN(); break;
+        case EXIT: FUNC_WHEN(); break;
         case UNLESS: FUNC_UNLESS(); break;
         case PRINT: FUNC_PRINT(); break;
+        case FUNCTION: SUBPROGRAM(); break;
+        case PROCEDURE: SUBPROGRAM(); break;
         default: printf("Error at STMT\n");
         error();
     }
@@ -913,9 +1062,9 @@ void FUNC_PROGRAM(void) {
     FUNC_MAIN();
     eat(BEGIN);
     STMTS();
-    printf("Expecting end for program\n");
     eat(END);
-    eat(PROGRAM);
+    eat(MAIN);
+    printf("Program parsed successfully\n");
 }
 
 int main(int argc, char **argv) {

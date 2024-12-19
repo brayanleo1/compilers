@@ -65,6 +65,7 @@
 #define EXIT 62
 #define RETURN 63
 #define DOT 64
+#define CALL 65
 
 
 #endif // TOKENS_H

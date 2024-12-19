@@ -131,6 +131,7 @@ const char* getName(int token) {
         case EXIT: return "EXIT";
         case BEGIN: return "BEGIN";
         case DOT: return "DOT";
+        case CALL: return "CALL";
         default: return "UNKNOWN";
     }
 }

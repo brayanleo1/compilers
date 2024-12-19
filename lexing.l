@@ -37,6 +37,7 @@
 "print"           { return PRINT; }
 "return"          { return RETURN; }
 "register"        { return REGISTER; }
+"call"            { return CALL; }
 
 "<-"               { return ASSIGN; }
 ":="               { return ASSIGN; }

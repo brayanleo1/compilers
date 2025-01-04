@@ -94,7 +94,8 @@ SUBPROGRAMS' ::= SUBPROGRAMS
 SUBPROGRAMS' ::= '' 
 SUBPROGRAM ::= FUNCTION 
 SUBPROGRAM ::= PROCEDURE 
-FUNCTION ::= function TYPE id ( ARGS' ) begin STMTS end id 
+FUNCTION ::= function TYPE id ( ARGS' ) begin STMTS RETURN end id
+RETURN ::= return STMT ;
 PROCEDURE ::= procedure id ( ARGS' ) begin STMTS end id 
 IF ::= if  EXP  STMTS' ELIF' ELSE end if 
 ELIF ::= elif  EXP  STMTS' ELIF'
@@ -308,6 +309,7 @@ void O_(void) {
         case PROCEDURE: break;
         case COLON: break;
         case DO: break;
+        case RETURN: break;
         case BREAK: break;
         default: printf("Error at O_\n");
         error();
@@ -403,6 +405,7 @@ void AP_(void) {
         case CALL: break;
         case PRINT: break;
         case DO: break;
+        case RETURN: break;
         default: printf("Error at AP_\n");
         error();
     }
@@ -465,6 +468,7 @@ void AF_(void) {
         case CALL: break;
         case PRINT: break;
         case DO: break;
+        case RETURN: break;
         default: printf("Error at AF_\n");
         error();
     }
@@ -526,6 +530,7 @@ void AT_(void) {
         case CALL: break;
         case PRINT: break;
         case DO: break;
+        case RETURN: break;
         default: printf("Error at AT_\n");
         error();
     }
@@ -579,6 +584,7 @@ void R_(void) {
         case CALL: break;
         case PRINT: break;
         case DO: break;
+        case RETURN: break;
         default: printf("Error at R_\n");
         error();
     }
@@ -649,6 +655,7 @@ void LC_(void) {
         case CALL: break;
         case PRINT: break;
         case DO: break;
+        case RETURN: break;
         default: printf("Error at LC_\n");
         error();
     }
@@ -698,6 +705,7 @@ void EXP_(void) {
         case CALL: break;
         case PRINT: break;
         case DO: break;
+        case RETURN: break;
         default: printf("Error at EXP_\n");
         error();
     }
@@ -948,6 +956,7 @@ void STMTS_(void) {
         case ELSE: break;
         case ELIF: break;
         case BREAK: break;
+        case RETURN: break;
         default: printf("Error at STMTS_\n");
         error();
     }
@@ -1007,10 +1016,20 @@ void FUNC_FUNCTION(void) {
     eat(RPAREN);
     eat(BEGIN);
     STMTS();
+    FUNC_RETURN();
     eat(END);
     eat(ID);
     printf("Exiting FUNC_FUNCTION\n");
 } 
+
+void FUNC_RETURN(void) {
+    switch (tok) {
+        case RETURN: eat(RETURN); STMT(); eat(SEMICOLON); break;
+        case END: break;
+        default: printf("Error at FUNC_RETURN\n");
+        error();
+    }
+}
 
 void FUNC_PROCEDURE(void) {
     printf("Entering FUNC_PROCEDURE\n");

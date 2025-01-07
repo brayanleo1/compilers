@@ -23,7 +23,6 @@
 "procedure"        { return PROCEDURE; }
 "function"         { return FUNCTION; }
 "if"               { return IF; }
-"then"             { return THEN; }
 "do"               { return DO; }
 "elif"             { return ELIF; }
 "else"             { return ELSE; }

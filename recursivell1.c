@@ -1,7 +1,7 @@
 /*Grammar
 
 PROGRAM ::= SUBPROGRAMS' MAIN begin STMTS end program
-MAIN ::= main ( EXP )
+MAIN ::= main ( ARGS' )
 VAR ::= const TYPE ASSIGN
 VAR ::= TYPE ASSIGN
 VAR ::= REGISTER_DECL

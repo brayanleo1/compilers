@@ -1,8 +1,5 @@
 Terminals unused in grammar
 
-    LBRACKET
-    RBRACKET
-    CALL
     PROGRAM
     ERROR
 
@@ -48,122 +45,124 @@ Grammar
    25 RULE_O: ID RULE_O_
    26       | RULE_LIT
    27       | LPAREN RULE_EXP RPAREN
+   28       | CALL ID LPAREN RULE_EXPS RPAREN
 
-   28 RULE_O_: LPAREN RULE_EXPS RPAREN
-   29        | DOT ID
+   29 RULE_O_: LBRACKET RULE_EXPS RBRACKET RULE_O_
+   30        | DOT ID
+   31        | %empty
 
-   30 RULE_AU: UNIPLUS RULE_AU
-   31        | UNIMINUS RULE_AU
-   32        | RULE_O
+   32 RULE_AU: UNIPLUS RULE_AU
+   33        | UNIMINUS RULE_AU
+   34        | RULE_O
 
-   33 RULE_AP: RULE_AP POWER RULE_AP
-   34        | RULE_AU
+   35 RULE_AP: RULE_AP POWER RULE_AP
+   36        | RULE_AU
 
-   35 RULE_AF: RULE_AF MULTIPLY RULE_AF
-   36        | RULE_AF DIVIDE RULE_AF
-   37        | RULE_AP
+   37 RULE_AF: RULE_AF MULTIPLY RULE_AF
+   38        | RULE_AF DIVIDE RULE_AF
+   39        | RULE_AP
 
-   38 RULE_AT: RULE_AT PLUS RULE_AF
-   39        | RULE_AT MINUS RULE_AF
-   40        | RULE_AF
+   40 RULE_AT: RULE_AT PLUS RULE_AF
+   41        | RULE_AT MINUS RULE_AF
+   42        | RULE_AF
 
-   41 RULE_R: RULE_AT RULE_R_
+   43 RULE_R: RULE_AT RULE_R_
 
-   42 RULE_R_: LESSTHAN RULE_AT
-   43        | GREATERTHAN RULE_AT
-   44        | LESSTHANOREQUAL RULE_AT
-   45        | GREATERTHANOREQUAL RULE_AT
-   46        | EQUALS RULE_AT
-   47        | NOTEQUAL RULE_AT
-   48        | %empty
+   44 RULE_R_: LESSTHAN RULE_AT
+   45        | GREATERTHAN RULE_AT
+   46        | LESSTHANOREQUAL RULE_AT
+   47        | GREATERTHANOREQUAL RULE_AT
+   48        | EQUALS RULE_AT
+   49        | NOTEQUAL RULE_AT
+   50        | %empty
 
-   49 RULE_LU: NOT RULE_R
-   50        | RULE_R
+   51 RULE_LU: NOT RULE_R
+   52        | RULE_R
 
-   51 RULE_LC: RULE_LC AND RULE_LC
-   52        | RULE_LU
+   53 RULE_LC: RULE_LC AND RULE_LC
+   54        | RULE_LU
 
-   53 RULE_EXP: RULE_EXP OR RULE_EXP
-   54         | RULE_LC
+   55 RULE_EXP: RULE_EXP OR RULE_EXP
+   56         | RULE_LC
 
-   55 RULE_ARGS: TYPE ID
-   56          | TYPE ID COMMA RULE_ARGS
-   57          | %empty
+   57 RULE_ARGS: TYPE ID
+   58          | TYPE ID COMMA RULE_ARGS
+   59          | %empty
 
-   58 RULE_STMTS: RULE_STMT
-   59           | RULE_STMT RULE_STMTS
+   60 RULE_STMTS: RULE_STMT
+   61           | RULE_STMT RULE_STMTS
 
-   60 RULE_STMT: RULE_VAR
-   61          | RULE_ASSIGN
-   62          | ID LPAREN RULE_EXPS RPAREN SEMICOLON
-   63          | RULE_SUBPROGRAM
-   64          | RULE_IF
-   65          | RULE_SWITCH
-   66          | RULE_FOR
-   67          | RULE_LOOP
-   68          | RULE_WHEN
-   69          | RULE_UNLESS
-   70          | RULE_PRINT
+   62 RULE_STMT: RULE_VAR
+   63          | RULE_ASSIGN
+   64          | ID LPAREN RULE_EXPS RPAREN SEMICOLON
+   65          | RULE_SUBPROGRAM
+   66          | RULE_IF
+   67          | RULE_SWITCH
+   68          | RULE_FOR
+   69          | RULE_LOOP
+   70          | RULE_WHEN
+   71          | RULE_UNLESS
+   72          | RULE_PRINT
 
-   71 RULE_SUBPROGRAMS: RULE_SUBPROGRAM
-   72                 | RULE_SUBPROGRAM RULE_SUBPROGRAMS
+   73 RULE_SUBPROGRAMS: RULE_SUBPROGRAM
+   74                 | RULE_SUBPROGRAM RULE_SUBPROGRAMS
 
-   73 RULE_SUBPROGRAMS_: RULE_SUBPROGRAMS
-   74                  | %empty
+   75 RULE_SUBPROGRAMS_: RULE_SUBPROGRAMS
+   76                  | %empty
 
-   75 RULE_SUBPROGRAM: RULE_FUNCTION
-   76                | RULE_PROCEDURE
+   77 RULE_SUBPROGRAM: RULE_FUNCTION
+   78                | RULE_PROCEDURE
 
-   77 RULE_FUNCTION: FUNCTION TYPE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS RULE_RETURN END ID
+   79 RULE_FUNCTION: FUNCTION TYPE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS RULE_RETURN END ID
 
-   78 RULE_RETURN: RETURN RULE_EXP SEMICOLON
-   79            | %empty
+   80 RULE_RETURN: RETURN RULE_EXP SEMICOLON
+   81            | %empty
 
-   80 RULE_PROCEDURE: PROCEDURE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS END ID
+   82 RULE_PROCEDURE: PROCEDURE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS END ID
 
-   81 RULE_IF: IF LPAREN RULE_R RPAREN RULE_STMTS RULE_ELIF RULE_ELSE END IF
+   83 RULE_IF: IF LPAREN RULE_EXP RPAREN RULE_STMTS RULE_ELIF RULE_ELSE END IF
 
-   82 RULE_ELIF: ELIF LPAREN RULE_EXP RPAREN RULE_STMTS ELIF
-   83          | %empty
-
-   84 RULE_ELSE: ELSE RULE_STMTS
+   84 RULE_ELIF: ELIF LPAREN RULE_EXP RPAREN RULE_STMTS ELIF
    85          | %empty
 
-   86 RULE_SWITCH: SWITCH LPAREN RULE_VAR RPAREN RULE_CASE RULE_DEFAULT END SWITCH
+   86 RULE_ELSE: ELSE RULE_STMTS
+   87          | %empty
 
-   87 RULE_CASE: CASE LPAREN RULE_EXP LPAREN COLON RULE_STMTS BREAK CASE
-   88          | %empty
+   88 RULE_SWITCH: SWITCH LPAREN RULE_VAR RPAREN RULE_CASE RULE_DEFAULT END SWITCH
 
-   89 RULE_DEFAULT: DEFAULT COLON RULE_STMTS BREAK
-   90             | %empty
+   89 RULE_CASE: CASE LPAREN RULE_EXP LPAREN COLON RULE_STMTS BREAK CASE
+   90          | %empty
 
-   91 RULE_FOR: FOR LPAREN RULE_ASSIGN SEMICOLON RULE_EXP SEMICOLON RULE_EXP RPAREN RULE_STMTS END FOR
+   91 RULE_DEFAULT: DEFAULT COLON RULE_STMTS BREAK
+   92             | %empty
 
-   92 RULE_LOOP: LOOP RULE_STMTS END LOOP
+   93 RULE_FOR: FOR LPAREN RULE_ASSIGN SEMICOLON RULE_EXP SEMICOLON RULE_EXP RPAREN RULE_STMTS END FOR
 
-   93 RULE_WHEN: EXIT WHEN RULE_EXP
+   94 RULE_LOOP: LOOP RULE_STMTS END LOOP
 
-   94 RULE_UNLESS: UNLESS RULE_EXP DO RULE_STMT
+   95 RULE_WHEN: EXIT WHEN RULE_EXP
 
-   95 RULE_PRINT: PRINT LPAREN RULE_PRINT_ RPAREN SEMICOLON
+   96 RULE_UNLESS: UNLESS RULE_EXP DO RULE_STMT
 
-   96 RULE_PRINT_: RULE_EXP
-   97            | CCHAR
-   98            | CSTRING
-   99            | CARRAY
+   97 RULE_PRINT: PRINT LPAREN RULE_PRINT_ RPAREN SEMICOLON
+
+   98 RULE_PRINT_: RULE_EXP
+   99            | CCHAR
+  100            | CSTRING
+  101            | CARRAY
 
 
 Terminals, with rules where they appear
 
     $end (0) 0
     error (256)
-    ID (258) 12 19 25 29 55 56 62 77 80
+    ID (258) 12 19 25 28 30 57 58 64 79 82
     CINT (259) 22
     CFLOAT (260) 23
     CBOOL (261) 24
-    CCHAR (262) 14 97
-    CSTRING (263) 15 98
-    CARRAY (264) 16 99
+    CCHAR (262) 14 99
+    CSTRING (263) 15 100
+    CARRAY (264) 16 101
     INT (265) 6
     FLOAT (266) 7
     BOOL (267) 8
@@ -173,56 +172,56 @@ Terminals, with rules where they appear
     CONST (271) 3
     REGISTER (272) 19
     MAIN (273) 1 2
-    T_BEGIN (274) 1 77 80
-    END (275) 1 77 80 81 86 91 92
-    IF (276) 81
-    ELIF (277) 82
-    ELSE (278) 84
-    SWITCH (279) 86
-    CASE (280) 87
-    DEFAULT (281) 89
-    FOR (282) 91
-    LOOP (283) 92
-    EXIT (284) 93
-    WHEN (285) 93
-    UNLESS (286) 94
-    PRINT (287) 95
-    NOT (288) 49
+    T_BEGIN (274) 1 79 82
+    END (275) 1 79 82 83 88 93 94
+    IF (276) 83
+    ELIF (277) 84
+    ELSE (278) 86
+    SWITCH (279) 88
+    CASE (280) 89
+    DEFAULT (281) 91
+    FOR (282) 93
+    LOOP (283) 94
+    EXIT (284) 95
+    WHEN (285) 95
+    UNLESS (286) 96
+    PRINT (287) 97
+    NOT (288) 51
     LBRACE (289) 17
     RBRACE (290) 17
-    SEMICOLON (291) 12 19 62 78 91 95
-    COMMA (292) 56
-    COLON (293) 87 89
-    DO (294) 94
-    TYPE (295) 55 56 77
-    BREAK (296) 87 89
-    PROCEDURE (297) 80
-    FUNCTION (298) 77
-    RETURN (299) 78
-    DOT (300) 29
+    SEMICOLON (291) 12 19 64 80 93 97
+    COMMA (292) 58
+    COLON (293) 89 91
+    DO (294) 96
+    TYPE (295) 57 58 79
+    BREAK (296) 89 91
+    PROCEDURE (297) 82
+    FUNCTION (298) 79
+    RETURN (299) 80
+    DOT (300) 30
     ASSIGN (301) 12
-    LBRACKET (302)
-    RBRACKET (303)
-    CALL (304)
+    LBRACKET (302) 29
+    RBRACKET (303) 29
+    CALL (304) 28
     PROGRAM (305)
     ERROR (306)
-    OR (307) 53
-    AND (308) 51
-    PLUS (309) 38
-    MINUS (310) 39
-    MULTIPLY (311) 35
-    DIVIDE (312) 36
-    POWER (313) 33
-    LESSTHAN (314) 42
-    GREATERTHAN (315) 43
-    LESSTHANOREQUAL (316) 44
-    GREATERTHANOREQUAL (317) 45
-    EQUALS (318) 46
-    NOTEQUAL (319) 47
-    LPAREN (320) 2 27 28 62 77 80 81 82 86 87 91 95
-    RPAREN (321) 2 27 28 62 77 80 81 82 86 91 95
-    UNIPLUS (322) 30
-    UNIMINUS (323) 31
+    OR (307) 55
+    AND (308) 53
+    PLUS (309) 40
+    MINUS (310) 41
+    MULTIPLY (311) 37
+    DIVIDE (312) 38
+    POWER (313) 35
+    LESSTHAN (314) 44
+    GREATERTHAN (315) 45
+    LESSTHANOREQUAL (316) 46
+    GREATERTHANOREQUAL (317) 47
+    EQUALS (318) 48
+    NOTEQUAL (319) 49
+    LPAREN (320) 2 27 28 64 79 82 83 84 88 89 93 97
+    RPAREN (321) 2 27 28 64 79 82 83 84 88 93 97
+    UNIPLUS (322) 32
+    UNIMINUS (323) 33
 
 
 Nonterminals, with rules where they appear
@@ -237,13 +236,13 @@ Nonterminals, with rules where they appear
         on right: 1
     RULE_VAR (72)
         on left: 3 4 5
-        on right: 60 86
+        on right: 62 88
     RULE_TYPE (73)
         on left: 6 7 8 9 10 11
         on right: 3 4 19
     RULE_ASSIGN (74)
         on left: 12
-        on right: 3 4 61 91
+        on right: 3 4 63 93
     RULE_ASSIGN_ (75)
         on left: 13 14 15 16
         on right: 12
@@ -255,106 +254,106 @@ Nonterminals, with rules where they appear
         on right: 5
     RULE_EXPS (78)
         on left: 20 21
-        on right: 21 28 62
+        on right: 21 28 29 64
     RULE_LIT (79)
         on left: 22 23 24
         on right: 26
     RULE_O (80)
-        on left: 25 26 27
-        on right: 32
+        on left: 25 26 27 28
+        on right: 34
     RULE_O_ (81)
-        on left: 28 29
-        on right: 25
+        on left: 29 30 31
+        on right: 25 29
     RULE_AU (82)
-        on left: 30 31 32
-        on right: 30 31 34
+        on left: 32 33 34
+        on right: 32 33 36
     RULE_AP (83)
-        on left: 33 34
-        on right: 33 37
+        on left: 35 36
+        on right: 35 39
     RULE_AF (84)
-        on left: 35 36 37
-        on right: 35 36 38 39 40
+        on left: 37 38 39
+        on right: 37 38 40 41 42
     RULE_AT (85)
-        on left: 38 39 40
-        on right: 38 39 41 42 43 44 45 46 47
+        on left: 40 41 42
+        on right: 40 41 43 44 45 46 47 48 49
     RULE_R (86)
-        on left: 41
-        on right: 49 50 81
+        on left: 43
+        on right: 51 52
     RULE_R_ (87)
-        on left: 42 43 44 45 46 47 48
-        on right: 41
+        on left: 44 45 46 47 48 49 50
+        on right: 43
     RULE_LU (88)
-        on left: 49 50
-        on right: 52
-    RULE_LC (89)
         on left: 51 52
-        on right: 51 54
-    RULE_EXP (90)
+        on right: 54
+    RULE_LC (89)
         on left: 53 54
-        on right: 13 17 20 21 27 53 78 82 87 91 93 94 96
+        on right: 53 56
+    RULE_EXP (90)
+        on left: 55 56
+        on right: 13 17 20 21 27 55 80 83 84 89 93 95 96 98
     RULE_ARGS (91)
-        on left: 55 56 57
-        on right: 2 56 77 80
+        on left: 57 58 59
+        on right: 2 58 79 82
     RULE_STMTS (92)
-        on left: 58 59
-        on right: 1 59 77 80 81 82 84 87 89 91 92
+        on left: 60 61
+        on right: 1 61 79 82 83 84 86 89 91 93 94
     RULE_STMT (93)
-        on left: 60 61 62 63 64 65 66 67 68 69 70
-        on right: 58 59 94
+        on left: 62 63 64 65 66 67 68 69 70 71 72
+        on right: 60 61 96
     RULE_SUBPROGRAMS (94)
-        on left: 71 72
-        on right: 72 73
-    RULE_SUBPROGRAMS_ (95)
         on left: 73 74
+        on right: 74 75
+    RULE_SUBPROGRAMS_ (95)
+        on left: 75 76
         on right: 1
     RULE_SUBPROGRAM (96)
-        on left: 75 76
-        on right: 63 71 72
+        on left: 77 78
+        on right: 65 73 74
     RULE_FUNCTION (97)
-        on left: 77
-        on right: 75
-    RULE_RETURN (98)
-        on left: 78 79
+        on left: 79
         on right: 77
+    RULE_RETURN (98)
+        on left: 80 81
+        on right: 79
     RULE_PROCEDURE (99)
-        on left: 80
-        on right: 76
+        on left: 82
+        on right: 78
     RULE_IF (100)
-        on left: 81
-        on right: 64
-    RULE_ELIF (101)
-        on left: 82 83
-        on right: 81
-    RULE_ELSE (102)
-        on left: 84 85
-        on right: 81
-    RULE_SWITCH (103)
-        on left: 86
-        on right: 65
-    RULE_CASE (104)
-        on left: 87 88
-        on right: 86
-    RULE_DEFAULT (105)
-        on left: 89 90
-        on right: 86
-    RULE_FOR (106)
-        on left: 91
+        on left: 83
         on right: 66
-    RULE_LOOP (107)
-        on left: 92
+    RULE_ELIF (101)
+        on left: 84 85
+        on right: 83
+    RULE_ELSE (102)
+        on left: 86 87
+        on right: 83
+    RULE_SWITCH (103)
+        on left: 88
         on right: 67
-    RULE_WHEN (108)
+    RULE_CASE (104)
+        on left: 89 90
+        on right: 88
+    RULE_DEFAULT (105)
+        on left: 91 92
+        on right: 88
+    RULE_FOR (106)
         on left: 93
         on right: 68
-    RULE_UNLESS (109)
+    RULE_LOOP (107)
         on left: 94
         on right: 69
-    RULE_PRINT (110)
+    RULE_WHEN (108)
         on left: 95
         on right: 70
+    RULE_UNLESS (109)
+        on left: 96
+        on right: 71
+    RULE_PRINT (110)
+        on left: 97
+        on right: 72
     RULE_PRINT_ (111)
-        on left: 96 97 98 99
-        on right: 95
+        on left: 98 99 100 101
+        on right: 97
 
 
 State 0
@@ -364,7 +363,7 @@ State 0
     PROCEDURE  shift, and go to state 1
     FUNCTION   shift, and go to state 2
 
-    $default  reduce using rule 74 (RULE_SUBPROGRAMS_)
+    $default  reduce using rule 76 (RULE_SUBPROGRAMS_)
 
     RULE_PROGRAM       go to state 3
     RULE_SUBPROGRAMS   go to state 4
@@ -376,14 +375,14 @@ State 0
 
 State 1
 
-   80 RULE_PROCEDURE: PROCEDURE . ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS END ID
+   82 RULE_PROCEDURE: PROCEDURE . ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS END ID
 
     ID  shift, and go to state 9
 
 
 State 2
 
-   77 RULE_FUNCTION: FUNCTION . TYPE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS RULE_RETURN END ID
+   79 RULE_FUNCTION: FUNCTION . TYPE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS RULE_RETURN END ID
 
     TYPE  shift, and go to state 10
 
@@ -397,9 +396,9 @@ State 3
 
 State 4
 
-   73 RULE_SUBPROGRAMS_: RULE_SUBPROGRAMS .
+   75 RULE_SUBPROGRAMS_: RULE_SUBPROGRAMS .
 
-    $default  reduce using rule 73 (RULE_SUBPROGRAMS_)
+    $default  reduce using rule 75 (RULE_SUBPROGRAMS_)
 
 
 State 5
@@ -413,13 +412,13 @@ State 5
 
 State 6
 
-   71 RULE_SUBPROGRAMS: RULE_SUBPROGRAM .
-   72                 | RULE_SUBPROGRAM . RULE_SUBPROGRAMS
+   73 RULE_SUBPROGRAMS: RULE_SUBPROGRAM .
+   74                 | RULE_SUBPROGRAM . RULE_SUBPROGRAMS
 
     PROCEDURE  shift, and go to state 1
     FUNCTION   shift, and go to state 2
 
-    $default  reduce using rule 71 (RULE_SUBPROGRAMS)
+    $default  reduce using rule 73 (RULE_SUBPROGRAMS)
 
     RULE_SUBPROGRAMS  go to state 14
     RULE_SUBPROGRAM   go to state 6
@@ -429,28 +428,28 @@ State 6
 
 State 7
 
-   75 RULE_SUBPROGRAM: RULE_FUNCTION .
+   77 RULE_SUBPROGRAM: RULE_FUNCTION .
 
-    $default  reduce using rule 75 (RULE_SUBPROGRAM)
+    $default  reduce using rule 77 (RULE_SUBPROGRAM)
 
 
 State 8
 
-   76 RULE_SUBPROGRAM: RULE_PROCEDURE .
+   78 RULE_SUBPROGRAM: RULE_PROCEDURE .
 
-    $default  reduce using rule 76 (RULE_SUBPROGRAM)
+    $default  reduce using rule 78 (RULE_SUBPROGRAM)
 
 
 State 9
 
-   80 RULE_PROCEDURE: PROCEDURE ID . LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS END ID
+   82 RULE_PROCEDURE: PROCEDURE ID . LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS END ID
 
     LPAREN  shift, and go to state 15
 
 
 State 10
 
-   77 RULE_FUNCTION: FUNCTION TYPE . ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS RULE_RETURN END ID
+   79 RULE_FUNCTION: FUNCTION TYPE . ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS RULE_RETURN END ID
 
     ID  shift, and go to state 16
 
@@ -478,25 +477,25 @@ State 13
 
 State 14
 
-   72 RULE_SUBPROGRAMS: RULE_SUBPROGRAM RULE_SUBPROGRAMS .
+   74 RULE_SUBPROGRAMS: RULE_SUBPROGRAM RULE_SUBPROGRAMS .
 
-    $default  reduce using rule 72 (RULE_SUBPROGRAMS)
+    $default  reduce using rule 74 (RULE_SUBPROGRAMS)
 
 
 State 15
 
-   80 RULE_PROCEDURE: PROCEDURE ID LPAREN . RULE_ARGS RPAREN T_BEGIN RULE_STMTS END ID
+   82 RULE_PROCEDURE: PROCEDURE ID LPAREN . RULE_ARGS RPAREN T_BEGIN RULE_STMTS END ID
 
     TYPE  shift, and go to state 19
 
-    $default  reduce using rule 57 (RULE_ARGS)
+    $default  reduce using rule 59 (RULE_ARGS)
 
     RULE_ARGS  go to state 20
 
 
 State 16
 
-   77 RULE_FUNCTION: FUNCTION TYPE ID . LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS RULE_RETURN END ID
+   79 RULE_FUNCTION: FUNCTION TYPE ID . LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS RULE_RETURN END ID
 
     LPAREN  shift, and go to state 21
 
@@ -507,7 +506,7 @@ State 17
 
     TYPE  shift, and go to state 19
 
-    $default  reduce using rule 57 (RULE_ARGS)
+    $default  reduce using rule 59 (RULE_ARGS)
 
     RULE_ARGS  go to state 22
 
@@ -555,26 +554,26 @@ State 18
 
 State 19
 
-   55 RULE_ARGS: TYPE . ID
-   56          | TYPE . ID COMMA RULE_ARGS
+   57 RULE_ARGS: TYPE . ID
+   58          | TYPE . ID COMMA RULE_ARGS
 
     ID  shift, and go to state 53
 
 
 State 20
 
-   80 RULE_PROCEDURE: PROCEDURE ID LPAREN RULE_ARGS . RPAREN T_BEGIN RULE_STMTS END ID
+   82 RULE_PROCEDURE: PROCEDURE ID LPAREN RULE_ARGS . RPAREN T_BEGIN RULE_STMTS END ID
 
     RPAREN  shift, and go to state 54
 
 
 State 21
 
-   77 RULE_FUNCTION: FUNCTION TYPE ID LPAREN . RULE_ARGS RPAREN T_BEGIN RULE_STMTS RULE_RETURN END ID
+   79 RULE_FUNCTION: FUNCTION TYPE ID LPAREN . RULE_ARGS RPAREN T_BEGIN RULE_STMTS RULE_RETURN END ID
 
     TYPE  shift, and go to state 19
 
-    $default  reduce using rule 57 (RULE_ARGS)
+    $default  reduce using rule 59 (RULE_ARGS)
 
     RULE_ARGS  go to state 55
 
@@ -589,7 +588,7 @@ State 22
 State 23
 
    12 RULE_ASSIGN: ID . RULE_ARRAY_DECL ASSIGN RULE_ASSIGN_ SEMICOLON
-   62 RULE_STMT: ID . LPAREN RULE_EXPS RPAREN SEMICOLON
+   64 RULE_STMT: ID . LPAREN RULE_EXPS RPAREN SEMICOLON
 
     LBRACE  shift, and go to state 57
     LPAREN  shift, and go to state 58
@@ -671,28 +670,28 @@ State 31
 
 State 32
 
-   81 RULE_IF: IF . LPAREN RULE_R RPAREN RULE_STMTS RULE_ELIF RULE_ELSE END IF
+   83 RULE_IF: IF . LPAREN RULE_EXP RPAREN RULE_STMTS RULE_ELIF RULE_ELSE END IF
 
     LPAREN  shift, and go to state 62
 
 
 State 33
 
-   86 RULE_SWITCH: SWITCH . LPAREN RULE_VAR RPAREN RULE_CASE RULE_DEFAULT END SWITCH
+   88 RULE_SWITCH: SWITCH . LPAREN RULE_VAR RPAREN RULE_CASE RULE_DEFAULT END SWITCH
 
     LPAREN  shift, and go to state 63
 
 
 State 34
 
-   91 RULE_FOR: FOR . LPAREN RULE_ASSIGN SEMICOLON RULE_EXP SEMICOLON RULE_EXP RPAREN RULE_STMTS END FOR
+   93 RULE_FOR: FOR . LPAREN RULE_ASSIGN SEMICOLON RULE_EXP SEMICOLON RULE_EXP RPAREN RULE_STMTS END FOR
 
     LPAREN  shift, and go to state 64
 
 
 State 35
 
-   92 RULE_LOOP: LOOP . RULE_STMTS END LOOP
+   94 RULE_LOOP: LOOP . RULE_STMTS END LOOP
 
     ID         shift, and go to state 23
     INT        shift, and go to state 24
@@ -733,64 +732,65 @@ State 35
 
 State 36
 
-   93 RULE_WHEN: EXIT . WHEN RULE_EXP
+   95 RULE_WHEN: EXIT . WHEN RULE_EXP
 
     WHEN  shift, and go to state 66
 
 
 State 37
 
-   94 RULE_UNLESS: UNLESS . RULE_EXP DO RULE_STMT
+   96 RULE_UNLESS: UNLESS . RULE_EXP DO RULE_STMT
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
     NOT       shift, and go to state 71
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 79
-    RULE_AT   go to state 80
-    RULE_R    go to state 81
-    RULE_LU   go to state 82
-    RULE_LC   go to state 83
-    RULE_EXP  go to state 84
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 80
+    RULE_AT   go to state 81
+    RULE_R    go to state 82
+    RULE_LU   go to state 83
+    RULE_LC   go to state 84
+    RULE_EXP  go to state 85
 
 
 State 38
 
-   95 RULE_PRINT: PRINT . LPAREN RULE_PRINT_ RPAREN SEMICOLON
+   97 RULE_PRINT: PRINT . LPAREN RULE_PRINT_ RPAREN SEMICOLON
 
-    LPAREN  shift, and go to state 85
+    LPAREN  shift, and go to state 86
 
 
 State 39
 
-   60 RULE_STMT: RULE_VAR .
+   62 RULE_STMT: RULE_VAR .
 
-    $default  reduce using rule 60 (RULE_STMT)
+    $default  reduce using rule 62 (RULE_STMT)
 
 
 State 40
 
     4 RULE_VAR: RULE_TYPE . RULE_ASSIGN
 
-    ID  shift, and go to state 86
+    ID  shift, and go to state 87
 
-    RULE_ASSIGN  go to state 87
+    RULE_ASSIGN  go to state 88
 
 
 State 41
 
-   61 RULE_STMT: RULE_ASSIGN .
+   63 RULE_STMT: RULE_ASSIGN .
 
-    $default  reduce using rule 61 (RULE_STMT)
+    $default  reduce using rule 63 (RULE_STMT)
 
 
 State 42
@@ -804,13 +804,13 @@ State 43
 
     1 RULE_PROGRAM: RULE_SUBPROGRAMS_ RULE_MAIN T_BEGIN RULE_STMTS . END MAIN
 
-    END  shift, and go to state 88
+    END  shift, and go to state 89
 
 
 State 44
 
-   58 RULE_STMTS: RULE_STMT .
-   59           | RULE_STMT . RULE_STMTS
+   60 RULE_STMTS: RULE_STMT .
+   61           | RULE_STMT . RULE_STMTS
 
     ID         shift, and go to state 23
     INT        shift, and go to state 24
@@ -831,13 +831,13 @@ State 44
     PROCEDURE  shift, and go to state 1
     FUNCTION   shift, and go to state 2
 
-    $default  reduce using rule 58 (RULE_STMTS)
+    $default  reduce using rule 60 (RULE_STMTS)
 
     RULE_VAR            go to state 39
     RULE_TYPE           go to state 40
     RULE_ASSIGN         go to state 41
     RULE_REGISTER_DECL  go to state 42
-    RULE_STMTS          go to state 89
+    RULE_STMTS          go to state 90
     RULE_STMT           go to state 44
     RULE_SUBPROGRAM     go to state 45
     RULE_FUNCTION       go to state 7
@@ -853,82 +853,82 @@ State 44
 
 State 45
 
-   63 RULE_STMT: RULE_SUBPROGRAM .
-
-    $default  reduce using rule 63 (RULE_STMT)
-
-
-State 46
-
-   64 RULE_STMT: RULE_IF .
-
-    $default  reduce using rule 64 (RULE_STMT)
-
-
-State 47
-
-   65 RULE_STMT: RULE_SWITCH .
+   65 RULE_STMT: RULE_SUBPROGRAM .
 
     $default  reduce using rule 65 (RULE_STMT)
 
 
-State 48
+State 46
 
-   66 RULE_STMT: RULE_FOR .
+   66 RULE_STMT: RULE_IF .
 
     $default  reduce using rule 66 (RULE_STMT)
 
 
-State 49
+State 47
 
-   67 RULE_STMT: RULE_LOOP .
+   67 RULE_STMT: RULE_SWITCH .
 
     $default  reduce using rule 67 (RULE_STMT)
 
 
-State 50
+State 48
 
-   68 RULE_STMT: RULE_WHEN .
+   68 RULE_STMT: RULE_FOR .
 
     $default  reduce using rule 68 (RULE_STMT)
 
 
-State 51
+State 49
 
-   69 RULE_STMT: RULE_UNLESS .
+   69 RULE_STMT: RULE_LOOP .
 
     $default  reduce using rule 69 (RULE_STMT)
 
 
-State 52
+State 50
 
-   70 RULE_STMT: RULE_PRINT .
+   70 RULE_STMT: RULE_WHEN .
 
     $default  reduce using rule 70 (RULE_STMT)
 
 
+State 51
+
+   71 RULE_STMT: RULE_UNLESS .
+
+    $default  reduce using rule 71 (RULE_STMT)
+
+
+State 52
+
+   72 RULE_STMT: RULE_PRINT .
+
+    $default  reduce using rule 72 (RULE_STMT)
+
+
 State 53
 
-   55 RULE_ARGS: TYPE ID .
-   56          | TYPE ID . COMMA RULE_ARGS
+   57 RULE_ARGS: TYPE ID .
+   58          | TYPE ID . COMMA RULE_ARGS
 
-    COMMA  shift, and go to state 90
+    COMMA  shift, and go to state 91
 
-    $default  reduce using rule 55 (RULE_ARGS)
+    $default  reduce using rule 57 (RULE_ARGS)
 
 
 State 54
 
-   80 RULE_PROCEDURE: PROCEDURE ID LPAREN RULE_ARGS RPAREN . T_BEGIN RULE_STMTS END ID
+   82 RULE_PROCEDURE: PROCEDURE ID LPAREN RULE_ARGS RPAREN . T_BEGIN RULE_STMTS END ID
 
-    T_BEGIN  shift, and go to state 91
+    T_BEGIN  shift, and go to state 92
 
 
 State 55
 
-   77 RULE_FUNCTION: FUNCTION TYPE ID LPAREN RULE_ARGS . RPAREN T_BEGIN RULE_STMTS RULE_RETURN END ID
+   79 RULE_FUNCTION: FUNCTION TYPE ID LPAREN RULE_ARGS . RPAREN T_BEGIN RULE_STMTS RULE_RETURN END ID
 
-    RPAREN  shift, and go to state 92
+    RPAREN  shift, and go to state 93
 
 
 State 56
@@ -947,95 +947,102 @@ State 57
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
     NOT       shift, and go to state 71
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 79
-    RULE_AT   go to state 80
-    RULE_R    go to state 81
-    RULE_LU   go to state 82
-    RULE_LC   go to state 83
-    RULE_EXP  go to state 93
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 80
+    RULE_AT   go to state 81
+    RULE_R    go to state 82
+    RULE_LU   go to state 83
+    RULE_LC   go to state 84
+    RULE_EXP  go to state 94
 
 
 State 58
 
-   62 RULE_STMT: ID LPAREN . RULE_EXPS RPAREN SEMICOLON
+   64 RULE_STMT: ID LPAREN . RULE_EXPS RPAREN SEMICOLON
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
     NOT       shift, and go to state 71
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_EXPS  go to state 94
-    RULE_LIT   go to state 75
-    RULE_O     go to state 76
-    RULE_AU    go to state 77
-    RULE_AP    go to state 78
-    RULE_AF    go to state 79
-    RULE_AT    go to state 80
-    RULE_R     go to state 81
-    RULE_LU    go to state 82
-    RULE_LC    go to state 83
-    RULE_EXP   go to state 95
+    RULE_EXPS  go to state 95
+    RULE_LIT   go to state 76
+    RULE_O     go to state 77
+    RULE_AU    go to state 78
+    RULE_AP    go to state 79
+    RULE_AF    go to state 80
+    RULE_AT    go to state 81
+    RULE_R     go to state 82
+    RULE_LU    go to state 83
+    RULE_LC    go to state 84
+    RULE_EXP   go to state 96
 
 
 State 59
 
    12 RULE_ASSIGN: ID RULE_ARRAY_DECL . ASSIGN RULE_ASSIGN_ SEMICOLON
 
-    ASSIGN  shift, and go to state 96
+    ASSIGN  shift, and go to state 97
 
 
 State 60
 
     3 RULE_VAR: CONST RULE_TYPE . RULE_ASSIGN
 
-    ID  shift, and go to state 86
+    ID  shift, and go to state 87
 
-    RULE_ASSIGN  go to state 97
+    RULE_ASSIGN  go to state 98
 
 
 State 61
 
    19 RULE_REGISTER_DECL: REGISTER RULE_TYPE . ID SEMICOLON
 
-    ID  shift, and go to state 98
+    ID  shift, and go to state 99
 
 
 State 62
 
-   81 RULE_IF: IF LPAREN . RULE_R RPAREN RULE_STMTS RULE_ELIF RULE_ELSE END IF
+   83 RULE_IF: IF LPAREN . RULE_EXP RPAREN RULE_STMTS RULE_ELIF RULE_ELSE END IF
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    NOT       shift, and go to state 71
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 79
-    RULE_AT   go to state 80
-    RULE_R    go to state 99
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 80
+    RULE_AT   go to state 81
+    RULE_R    go to state 82
+    RULE_LU   go to state 83
+    RULE_LC   go to state 84
+    RULE_EXP  go to state 100
 
 
 State 63
 
-   86 RULE_SWITCH: SWITCH LPAREN . RULE_VAR RPAREN RULE_CASE RULE_DEFAULT END SWITCH
+   88 RULE_SWITCH: SWITCH LPAREN . RULE_VAR RPAREN RULE_CASE RULE_DEFAULT END SWITCH
 
     INT       shift, and go to state 24
     FLOAT     shift, and go to state 25
@@ -1046,60 +1053,63 @@ State 63
     CONST     shift, and go to state 30
     REGISTER  shift, and go to state 31
 
-    RULE_VAR            go to state 100
+    RULE_VAR            go to state 101
     RULE_TYPE           go to state 40
     RULE_REGISTER_DECL  go to state 42
 
 
 State 64
 
-   91 RULE_FOR: FOR LPAREN . RULE_ASSIGN SEMICOLON RULE_EXP SEMICOLON RULE_EXP RPAREN RULE_STMTS END FOR
+   93 RULE_FOR: FOR LPAREN . RULE_ASSIGN SEMICOLON RULE_EXP SEMICOLON RULE_EXP RPAREN RULE_STMTS END FOR
 
-    ID  shift, and go to state 86
+    ID  shift, and go to state 87
 
-    RULE_ASSIGN  go to state 101
+    RULE_ASSIGN  go to state 102
 
 
 State 65
 
-   92 RULE_LOOP: LOOP RULE_STMTS . END LOOP
+   94 RULE_LOOP: LOOP RULE_STMTS . END LOOP
 
-    END  shift, and go to state 102
+    END  shift, and go to state 103
 
 
 State 66
 
-   93 RULE_WHEN: EXIT WHEN . RULE_EXP
+   95 RULE_WHEN: EXIT WHEN . RULE_EXP
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
     NOT       shift, and go to state 71
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 79
-    RULE_AT   go to state 80
-    RULE_R    go to state 81
-    RULE_LU   go to state 82
-    RULE_LC   go to state 83
-    RULE_EXP  go to state 103
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 80
+    RULE_AT   go to state 81
+    RULE_R    go to state 82
+    RULE_LU   go to state 83
+    RULE_LC   go to state 84
+    RULE_EXP  go to state 104
 
 
 State 67
 
    25 RULE_O: ID . RULE_O_
 
-    DOT     shift, and go to state 104
-    LPAREN  shift, and go to state 105
+    DOT       shift, and go to state 105
+    LBRACKET  shift, and go to state 106
 
-    RULE_O_  go to state 106
+    $default  reduce using rule 31 (RULE_O_)
+
+    RULE_O_  go to state 107
 
 
 State 68
@@ -1125,26 +1135,34 @@ State 70
 
 State 71
 
-   49 RULE_LU: NOT . RULE_R
+   51 RULE_LU: NOT . RULE_R
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 79
-    RULE_AT   go to state 80
-    RULE_R    go to state 107
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 80
+    RULE_AT   go to state 81
+    RULE_R    go to state 108
 
 
 State 72
+
+   28 RULE_O: CALL . ID LPAREN RULE_EXPS RPAREN
+
+    ID  shift, and go to state 109
+
+
+State 73
 
    27 RULE_O: LPAREN . RULE_EXP RPAREN
 
@@ -1153,182 +1171,186 @@ State 72
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
     NOT       shift, and go to state 71
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 79
-    RULE_AT   go to state 80
-    RULE_R    go to state 81
-    RULE_LU   go to state 82
-    RULE_LC   go to state 83
-    RULE_EXP  go to state 108
-
-
-State 73
-
-   30 RULE_AU: UNIPLUS . RULE_AU
-
-    ID        shift, and go to state 67
-    CINT      shift, and go to state 68
-    CFLOAT    shift, and go to state 69
-    CBOOL     shift, and go to state 70
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
-
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 109
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 80
+    RULE_AT   go to state 81
+    RULE_R    go to state 82
+    RULE_LU   go to state 83
+    RULE_LC   go to state 84
+    RULE_EXP  go to state 110
 
 
 State 74
 
-   31 RULE_AU: UNIMINUS . RULE_AU
+   32 RULE_AU: UNIPLUS . RULE_AU
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 110
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 111
 
 
 State 75
+
+   33 RULE_AU: UNIMINUS . RULE_AU
+
+    ID        shift, and go to state 67
+    CINT      shift, and go to state 68
+    CFLOAT    shift, and go to state 69
+    CBOOL     shift, and go to state 70
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
+
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 112
+
+
+State 76
 
    26 RULE_O: RULE_LIT .
 
     $default  reduce using rule 26 (RULE_O)
 
 
-State 76
-
-   32 RULE_AU: RULE_O .
-
-    $default  reduce using rule 32 (RULE_AU)
-
-
 State 77
 
-   34 RULE_AP: RULE_AU .
+   34 RULE_AU: RULE_O .
 
-    $default  reduce using rule 34 (RULE_AP)
+    $default  reduce using rule 34 (RULE_AU)
 
 
 State 78
 
-   33 RULE_AP: RULE_AP . POWER RULE_AP
-   37 RULE_AF: RULE_AP .
+   36 RULE_AP: RULE_AU .
 
-    POWER  shift, and go to state 111
-
-    $default  reduce using rule 37 (RULE_AF)
+    $default  reduce using rule 36 (RULE_AP)
 
 
 State 79
 
-   35 RULE_AF: RULE_AF . MULTIPLY RULE_AF
-   36        | RULE_AF . DIVIDE RULE_AF
-   40 RULE_AT: RULE_AF .
+   35 RULE_AP: RULE_AP . POWER RULE_AP
+   39 RULE_AF: RULE_AP .
 
-    MULTIPLY  shift, and go to state 112
-    DIVIDE    shift, and go to state 113
+    POWER  shift, and go to state 113
 
-    $default  reduce using rule 40 (RULE_AT)
+    $default  reduce using rule 39 (RULE_AF)
 
 
 State 80
 
-   38 RULE_AT: RULE_AT . PLUS RULE_AF
-   39        | RULE_AT . MINUS RULE_AF
-   41 RULE_R: RULE_AT . RULE_R_
+   37 RULE_AF: RULE_AF . MULTIPLY RULE_AF
+   38        | RULE_AF . DIVIDE RULE_AF
+   42 RULE_AT: RULE_AF .
 
-    PLUS                shift, and go to state 114
-    MINUS               shift, and go to state 115
-    LESSTHAN            shift, and go to state 116
-    GREATERTHAN         shift, and go to state 117
-    LESSTHANOREQUAL     shift, and go to state 118
-    GREATERTHANOREQUAL  shift, and go to state 119
-    EQUALS              shift, and go to state 120
-    NOTEQUAL            shift, and go to state 121
+    MULTIPLY  shift, and go to state 114
+    DIVIDE    shift, and go to state 115
 
-    $default  reduce using rule 48 (RULE_R_)
-
-    RULE_R_  go to state 122
+    $default  reduce using rule 42 (RULE_AT)
 
 
 State 81
 
-   50 RULE_LU: RULE_R .
+   40 RULE_AT: RULE_AT . PLUS RULE_AF
+   41        | RULE_AT . MINUS RULE_AF
+   43 RULE_R: RULE_AT . RULE_R_
 
-    $default  reduce using rule 50 (RULE_LU)
+    PLUS                shift, and go to state 116
+    MINUS               shift, and go to state 117
+    LESSTHAN            shift, and go to state 118
+    GREATERTHAN         shift, and go to state 119
+    LESSTHANOREQUAL     shift, and go to state 120
+    GREATERTHANOREQUAL  shift, and go to state 121
+    EQUALS              shift, and go to state 122
+    NOTEQUAL            shift, and go to state 123
+
+    $default  reduce using rule 50 (RULE_R_)
+
+    RULE_R_  go to state 124
 
 
 State 82
 
-   52 RULE_LC: RULE_LU .
+   52 RULE_LU: RULE_R .
 
-    $default  reduce using rule 52 (RULE_LC)
+    $default  reduce using rule 52 (RULE_LU)
 
 
 State 83
 
-   51 RULE_LC: RULE_LC . AND RULE_LC
-   54 RULE_EXP: RULE_LC .
+   54 RULE_LC: RULE_LU .
 
-    AND  shift, and go to state 123
-
-    $default  reduce using rule 54 (RULE_EXP)
+    $default  reduce using rule 54 (RULE_LC)
 
 
 State 84
 
-   53 RULE_EXP: RULE_EXP . OR RULE_EXP
-   94 RULE_UNLESS: UNLESS RULE_EXP . DO RULE_STMT
+   53 RULE_LC: RULE_LC . AND RULE_LC
+   56 RULE_EXP: RULE_LC .
 
-    DO  shift, and go to state 124
-    OR  shift, and go to state 125
+    AND  shift, and go to state 125
+
+    $default  reduce using rule 56 (RULE_EXP)
 
 
 State 85
 
-   95 RULE_PRINT: PRINT LPAREN . RULE_PRINT_ RPAREN SEMICOLON
+   55 RULE_EXP: RULE_EXP . OR RULE_EXP
+   96 RULE_UNLESS: UNLESS RULE_EXP . DO RULE_STMT
+
+    DO  shift, and go to state 126
+    OR  shift, and go to state 127
+
+
+State 86
+
+   97 RULE_PRINT: PRINT LPAREN . RULE_PRINT_ RPAREN SEMICOLON
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
-    CCHAR     shift, and go to state 126
-    CSTRING   shift, and go to state 127
-    CARRAY    shift, and go to state 128
+    CCHAR     shift, and go to state 128
+    CSTRING   shift, and go to state 129
+    CARRAY    shift, and go to state 130
     NOT       shift, and go to state 71
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT     go to state 75
-    RULE_O       go to state 76
-    RULE_AU      go to state 77
-    RULE_AP      go to state 78
-    RULE_AF      go to state 79
-    RULE_AT      go to state 80
-    RULE_R       go to state 81
-    RULE_LU      go to state 82
-    RULE_LC      go to state 83
-    RULE_EXP     go to state 129
-    RULE_PRINT_  go to state 130
+    RULE_LIT     go to state 76
+    RULE_O       go to state 77
+    RULE_AU      go to state 78
+    RULE_AP      go to state 79
+    RULE_AF      go to state 80
+    RULE_AT      go to state 81
+    RULE_R       go to state 82
+    RULE_LU      go to state 83
+    RULE_LC      go to state 84
+    RULE_EXP     go to state 131
+    RULE_PRINT_  go to state 132
 
 
-State 86
+State 87
 
    12 RULE_ASSIGN: ID . RULE_ARRAY_DECL ASSIGN RULE_ASSIGN_ SEMICOLON
 
@@ -1339,41 +1361,41 @@ State 86
     RULE_ARRAY_DECL  go to state 59
 
 
-State 87
+State 88
 
     4 RULE_VAR: RULE_TYPE RULE_ASSIGN .
 
     $default  reduce using rule 4 (RULE_VAR)
 
 
-State 88
+State 89
 
     1 RULE_PROGRAM: RULE_SUBPROGRAMS_ RULE_MAIN T_BEGIN RULE_STMTS END . MAIN
 
-    MAIN  shift, and go to state 131
-
-
-State 89
-
-   59 RULE_STMTS: RULE_STMT RULE_STMTS .
-
-    $default  reduce using rule 59 (RULE_STMTS)
+    MAIN  shift, and go to state 133
 
 
 State 90
 
-   56 RULE_ARGS: TYPE ID COMMA . RULE_ARGS
+   61 RULE_STMTS: RULE_STMT RULE_STMTS .
 
-    TYPE  shift, and go to state 19
-
-    $default  reduce using rule 57 (RULE_ARGS)
-
-    RULE_ARGS  go to state 132
+    $default  reduce using rule 61 (RULE_STMTS)
 
 
 State 91
 
-   80 RULE_PROCEDURE: PROCEDURE ID LPAREN RULE_ARGS RPAREN T_BEGIN . RULE_STMTS END ID
+   58 RULE_ARGS: TYPE ID COMMA . RULE_ARGS
+
+    TYPE  shift, and go to state 19
+
+    $default  reduce using rule 59 (RULE_ARGS)
+
+    RULE_ARGS  go to state 134
+
+
+State 92
+
+   82 RULE_PROCEDURE: PROCEDURE ID LPAREN RULE_ARGS RPAREN T_BEGIN . RULE_STMTS END ID
 
     ID         shift, and go to state 23
     INT        shift, and go to state 24
@@ -1398,7 +1420,7 @@ State 91
     RULE_TYPE           go to state 40
     RULE_ASSIGN         go to state 41
     RULE_REGISTER_DECL  go to state 42
-    RULE_STMTS          go to state 133
+    RULE_STMTS          go to state 135
     RULE_STMT           go to state 44
     RULE_SUBPROGRAM     go to state 45
     RULE_FUNCTION       go to state 7
@@ -1412,61 +1434,62 @@ State 91
     RULE_PRINT          go to state 52
 
 
-State 92
-
-   77 RULE_FUNCTION: FUNCTION TYPE ID LPAREN RULE_ARGS RPAREN . T_BEGIN RULE_STMTS RULE_RETURN END ID
-
-    T_BEGIN  shift, and go to state 134
-
-
 State 93
 
-   17 RULE_ARRAY_DECL: LBRACE RULE_EXP . RBRACE RULE_ARRAY_DECL
-   53 RULE_EXP: RULE_EXP . OR RULE_EXP
+   79 RULE_FUNCTION: FUNCTION TYPE ID LPAREN RULE_ARGS RPAREN . T_BEGIN RULE_STMTS RULE_RETURN END ID
 
-    RBRACE  shift, and go to state 135
-    OR      shift, and go to state 125
+    T_BEGIN  shift, and go to state 136
 
 
 State 94
 
-   62 RULE_STMT: ID LPAREN RULE_EXPS . RPAREN SEMICOLON
+   17 RULE_ARRAY_DECL: LBRACE RULE_EXP . RBRACE RULE_ARRAY_DECL
+   55 RULE_EXP: RULE_EXP . OR RULE_EXP
 
-    RPAREN  shift, and go to state 136
+    RBRACE  shift, and go to state 137
+    OR      shift, and go to state 127
 
 
 State 95
 
+   64 RULE_STMT: ID LPAREN RULE_EXPS . RPAREN SEMICOLON
+
+    RPAREN  shift, and go to state 138
+
+
+State 96
+
    20 RULE_EXPS: RULE_EXP .
    21          | RULE_EXP . RULE_EXPS
-   53 RULE_EXP: RULE_EXP . OR RULE_EXP
+   55 RULE_EXP: RULE_EXP . OR RULE_EXP
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
     NOT       shift, and go to state 71
-    OR        shift, and go to state 125
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    OR        shift, and go to state 127
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
     $default  reduce using rule 20 (RULE_EXPS)
 
-    RULE_EXPS  go to state 137
-    RULE_LIT   go to state 75
-    RULE_O     go to state 76
-    RULE_AU    go to state 77
-    RULE_AP    go to state 78
-    RULE_AF    go to state 79
-    RULE_AT    go to state 80
-    RULE_R     go to state 81
-    RULE_LU    go to state 82
-    RULE_LC    go to state 83
-    RULE_EXP   go to state 95
+    RULE_EXPS  go to state 139
+    RULE_LIT   go to state 76
+    RULE_O     go to state 77
+    RULE_AU    go to state 78
+    RULE_AP    go to state 79
+    RULE_AF    go to state 80
+    RULE_AT    go to state 81
+    RULE_R     go to state 82
+    RULE_LU    go to state 83
+    RULE_LC    go to state 84
+    RULE_EXP   go to state 96
 
 
-State 96
+State 97
 
    12 RULE_ASSIGN: ID RULE_ARRAY_DECL ASSIGN . RULE_ASSIGN_ SEMICOLON
 
@@ -1474,397 +1497,420 @@ State 96
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
-    CCHAR     shift, and go to state 138
-    CSTRING   shift, and go to state 139
-    CARRAY    shift, and go to state 140
+    CCHAR     shift, and go to state 140
+    CSTRING   shift, and go to state 141
+    CARRAY    shift, and go to state 142
     NOT       shift, and go to state 71
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_ASSIGN_  go to state 141
-    RULE_LIT      go to state 75
-    RULE_O        go to state 76
-    RULE_AU       go to state 77
-    RULE_AP       go to state 78
-    RULE_AF       go to state 79
-    RULE_AT       go to state 80
-    RULE_R        go to state 81
-    RULE_LU       go to state 82
-    RULE_LC       go to state 83
-    RULE_EXP      go to state 142
+    RULE_ASSIGN_  go to state 143
+    RULE_LIT      go to state 76
+    RULE_O        go to state 77
+    RULE_AU       go to state 78
+    RULE_AP       go to state 79
+    RULE_AF       go to state 80
+    RULE_AT       go to state 81
+    RULE_R        go to state 82
+    RULE_LU       go to state 83
+    RULE_LC       go to state 84
+    RULE_EXP      go to state 144
 
 
-State 97
+State 98
 
     3 RULE_VAR: CONST RULE_TYPE RULE_ASSIGN .
 
     $default  reduce using rule 3 (RULE_VAR)
 
 
-State 98
+State 99
 
    19 RULE_REGISTER_DECL: REGISTER RULE_TYPE ID . SEMICOLON
 
-    SEMICOLON  shift, and go to state 143
-
-
-State 99
-
-   81 RULE_IF: IF LPAREN RULE_R . RPAREN RULE_STMTS RULE_ELIF RULE_ELSE END IF
-
-    RPAREN  shift, and go to state 144
+    SEMICOLON  shift, and go to state 145
 
 
 State 100
 
-   86 RULE_SWITCH: SWITCH LPAREN RULE_VAR . RPAREN RULE_CASE RULE_DEFAULT END SWITCH
+   55 RULE_EXP: RULE_EXP . OR RULE_EXP
+   83 RULE_IF: IF LPAREN RULE_EXP . RPAREN RULE_STMTS RULE_ELIF RULE_ELSE END IF
 
-    RPAREN  shift, and go to state 145
+    OR      shift, and go to state 127
+    RPAREN  shift, and go to state 146
 
 
 State 101
 
-   91 RULE_FOR: FOR LPAREN RULE_ASSIGN . SEMICOLON RULE_EXP SEMICOLON RULE_EXP RPAREN RULE_STMTS END FOR
+   88 RULE_SWITCH: SWITCH LPAREN RULE_VAR . RPAREN RULE_CASE RULE_DEFAULT END SWITCH
 
-    SEMICOLON  shift, and go to state 146
+    RPAREN  shift, and go to state 147
 
 
 State 102
 
-   92 RULE_LOOP: LOOP RULE_STMTS END . LOOP
+   93 RULE_FOR: FOR LPAREN RULE_ASSIGN . SEMICOLON RULE_EXP SEMICOLON RULE_EXP RPAREN RULE_STMTS END FOR
 
-    LOOP  shift, and go to state 147
+    SEMICOLON  shift, and go to state 148
 
 
 State 103
 
-   53 RULE_EXP: RULE_EXP . OR RULE_EXP
-   93 RULE_WHEN: EXIT WHEN RULE_EXP .
+   94 RULE_LOOP: LOOP RULE_STMTS END . LOOP
 
-    OR  shift, and go to state 125
-
-    $default  reduce using rule 93 (RULE_WHEN)
+    LOOP  shift, and go to state 149
 
 
 State 104
 
-   29 RULE_O_: DOT . ID
+   55 RULE_EXP: RULE_EXP . OR RULE_EXP
+   95 RULE_WHEN: EXIT WHEN RULE_EXP .
 
-    ID  shift, and go to state 148
+    OR  shift, and go to state 127
+
+    $default  reduce using rule 95 (RULE_WHEN)
 
 
 State 105
 
-   28 RULE_O_: LPAREN . RULE_EXPS RPAREN
+   30 RULE_O_: DOT . ID
+
+    ID  shift, and go to state 150
+
+
+State 106
+
+   29 RULE_O_: LBRACKET . RULE_EXPS RBRACKET RULE_O_
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
     NOT       shift, and go to state 71
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_EXPS  go to state 149
-    RULE_LIT   go to state 75
-    RULE_O     go to state 76
-    RULE_AU    go to state 77
-    RULE_AP    go to state 78
-    RULE_AF    go to state 79
-    RULE_AT    go to state 80
-    RULE_R     go to state 81
-    RULE_LU    go to state 82
-    RULE_LC    go to state 83
-    RULE_EXP   go to state 95
+    RULE_EXPS  go to state 151
+    RULE_LIT   go to state 76
+    RULE_O     go to state 77
+    RULE_AU    go to state 78
+    RULE_AP    go to state 79
+    RULE_AF    go to state 80
+    RULE_AT    go to state 81
+    RULE_R     go to state 82
+    RULE_LU    go to state 83
+    RULE_LC    go to state 84
+    RULE_EXP   go to state 96
 
 
-State 106
+State 107
 
    25 RULE_O: ID RULE_O_ .
 
     $default  reduce using rule 25 (RULE_O)
 
 
-State 107
-
-   49 RULE_LU: NOT RULE_R .
-
-    $default  reduce using rule 49 (RULE_LU)
-
-
 State 108
 
-   27 RULE_O: LPAREN RULE_EXP . RPAREN
-   53 RULE_EXP: RULE_EXP . OR RULE_EXP
+   51 RULE_LU: NOT RULE_R .
 
-    OR      shift, and go to state 125
-    RPAREN  shift, and go to state 150
+    $default  reduce using rule 51 (RULE_LU)
 
 
 State 109
 
-   30 RULE_AU: UNIPLUS RULE_AU .
+   28 RULE_O: CALL ID . LPAREN RULE_EXPS RPAREN
 
-    $default  reduce using rule 30 (RULE_AU)
+    LPAREN  shift, and go to state 152
 
 
 State 110
 
-   31 RULE_AU: UNIMINUS RULE_AU .
+   27 RULE_O: LPAREN RULE_EXP . RPAREN
+   55 RULE_EXP: RULE_EXP . OR RULE_EXP
 
-    $default  reduce using rule 31 (RULE_AU)
+    OR      shift, and go to state 127
+    RPAREN  shift, and go to state 153
 
 
 State 111
 
-   33 RULE_AP: RULE_AP POWER . RULE_AP
+   32 RULE_AU: UNIPLUS RULE_AU .
 
-    ID        shift, and go to state 67
-    CINT      shift, and go to state 68
-    CFLOAT    shift, and go to state 69
-    CBOOL     shift, and go to state 70
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
-
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 151
+    $default  reduce using rule 32 (RULE_AU)
 
 
 State 112
 
-   35 RULE_AF: RULE_AF MULTIPLY . RULE_AF
+   33 RULE_AU: UNIMINUS RULE_AU .
 
-    ID        shift, and go to state 67
-    CINT      shift, and go to state 68
-    CFLOAT    shift, and go to state 69
-    CBOOL     shift, and go to state 70
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
-
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 152
+    $default  reduce using rule 33 (RULE_AU)
 
 
 State 113
 
-   36 RULE_AF: RULE_AF DIVIDE . RULE_AF
+   35 RULE_AP: RULE_AP POWER . RULE_AP
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 153
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 154
 
 
 State 114
 
-   38 RULE_AT: RULE_AT PLUS . RULE_AF
+   37 RULE_AF: RULE_AF MULTIPLY . RULE_AF
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 154
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 155
 
 
 State 115
 
-   39 RULE_AT: RULE_AT MINUS . RULE_AF
+   38 RULE_AF: RULE_AF DIVIDE . RULE_AF
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 155
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 156
 
 
 State 116
 
-   42 RULE_R_: LESSTHAN . RULE_AT
+   40 RULE_AT: RULE_AT PLUS . RULE_AF
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 79
-    RULE_AT   go to state 156
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 157
 
 
 State 117
 
-   43 RULE_R_: GREATERTHAN . RULE_AT
+   41 RULE_AT: RULE_AT MINUS . RULE_AF
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 79
-    RULE_AT   go to state 157
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 158
 
 
 State 118
 
-   44 RULE_R_: LESSTHANOREQUAL . RULE_AT
+   44 RULE_R_: LESSTHAN . RULE_AT
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 79
-    RULE_AT   go to state 158
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 80
+    RULE_AT   go to state 159
 
 
 State 119
 
-   45 RULE_R_: GREATERTHANOREQUAL . RULE_AT
+   45 RULE_R_: GREATERTHAN . RULE_AT
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 79
-    RULE_AT   go to state 159
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 80
+    RULE_AT   go to state 160
 
 
 State 120
 
-   46 RULE_R_: EQUALS . RULE_AT
+   46 RULE_R_: LESSTHANOREQUAL . RULE_AT
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 79
-    RULE_AT   go to state 160
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 80
+    RULE_AT   go to state 161
 
 
 State 121
 
-   47 RULE_R_: NOTEQUAL . RULE_AT
+   47 RULE_R_: GREATERTHANOREQUAL . RULE_AT
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 79
-    RULE_AT   go to state 161
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 80
+    RULE_AT   go to state 162
 
 
 State 122
 
-   41 RULE_R: RULE_AT RULE_R_ .
+   48 RULE_R_: EQUALS . RULE_AT
 
-    $default  reduce using rule 41 (RULE_R)
+    ID        shift, and go to state 67
+    CINT      shift, and go to state 68
+    CFLOAT    shift, and go to state 69
+    CBOOL     shift, and go to state 70
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
+
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 80
+    RULE_AT   go to state 163
 
 
 State 123
 
-   51 RULE_LC: RULE_LC AND . RULE_LC
+   49 RULE_R_: NOTEQUAL . RULE_AT
+
+    ID        shift, and go to state 67
+    CINT      shift, and go to state 68
+    CFLOAT    shift, and go to state 69
+    CBOOL     shift, and go to state 70
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
+
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 80
+    RULE_AT   go to state 164
+
+
+State 124
+
+   43 RULE_R: RULE_AT RULE_R_ .
+
+    $default  reduce using rule 43 (RULE_R)
+
+
+State 125
+
+   53 RULE_LC: RULE_LC AND . RULE_LC
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
     NOT       shift, and go to state 71
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 79
-    RULE_AT   go to state 80
-    RULE_R    go to state 81
-    RULE_LU   go to state 82
-    RULE_LC   go to state 162
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 80
+    RULE_AT   go to state 81
+    RULE_R    go to state 82
+    RULE_LU   go to state 83
+    RULE_LC   go to state 165
 
 
-State 124
+State 126
 
-   94 RULE_UNLESS: UNLESS RULE_EXP DO . RULE_STMT
+   96 RULE_UNLESS: UNLESS RULE_EXP DO . RULE_STMT
 
     ID         shift, and go to state 23
     INT        shift, and go to state 24
@@ -1889,7 +1935,7 @@ State 124
     RULE_TYPE           go to state 40
     RULE_ASSIGN         go to state 41
     RULE_REGISTER_DECL  go to state 42
-    RULE_STMT           go to state 163
+    RULE_STMT           go to state 166
     RULE_SUBPROGRAM     go to state 45
     RULE_FUNCTION       go to state 7
     RULE_PROCEDURE      go to state 8
@@ -1902,93 +1948,94 @@ State 124
     RULE_PRINT          go to state 52
 
 
-State 125
+State 127
 
-   53 RULE_EXP: RULE_EXP OR . RULE_EXP
+   55 RULE_EXP: RULE_EXP OR . RULE_EXP
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
     NOT       shift, and go to state 71
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 79
-    RULE_AT   go to state 80
-    RULE_R    go to state 81
-    RULE_LU   go to state 82
-    RULE_LC   go to state 83
-    RULE_EXP  go to state 164
-
-
-State 126
-
-   97 RULE_PRINT_: CCHAR .
-
-    $default  reduce using rule 97 (RULE_PRINT_)
-
-
-State 127
-
-   98 RULE_PRINT_: CSTRING .
-
-    $default  reduce using rule 98 (RULE_PRINT_)
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 80
+    RULE_AT   go to state 81
+    RULE_R    go to state 82
+    RULE_LU   go to state 83
+    RULE_LC   go to state 84
+    RULE_EXP  go to state 167
 
 
 State 128
 
-   99 RULE_PRINT_: CARRAY .
+   99 RULE_PRINT_: CCHAR .
 
     $default  reduce using rule 99 (RULE_PRINT_)
 
 
 State 129
 
-   53 RULE_EXP: RULE_EXP . OR RULE_EXP
-   96 RULE_PRINT_: RULE_EXP .
+  100 RULE_PRINT_: CSTRING .
 
-    OR  shift, and go to state 125
-
-    $default  reduce using rule 96 (RULE_PRINT_)
+    $default  reduce using rule 100 (RULE_PRINT_)
 
 
 State 130
 
-   95 RULE_PRINT: PRINT LPAREN RULE_PRINT_ . RPAREN SEMICOLON
+  101 RULE_PRINT_: CARRAY .
 
-    RPAREN  shift, and go to state 165
+    $default  reduce using rule 101 (RULE_PRINT_)
 
 
 State 131
+
+   55 RULE_EXP: RULE_EXP . OR RULE_EXP
+   98 RULE_PRINT_: RULE_EXP .
+
+    OR  shift, and go to state 127
+
+    $default  reduce using rule 98 (RULE_PRINT_)
+
+
+State 132
+
+   97 RULE_PRINT: PRINT LPAREN RULE_PRINT_ . RPAREN SEMICOLON
+
+    RPAREN  shift, and go to state 168
+
+
+State 133
 
     1 RULE_PROGRAM: RULE_SUBPROGRAMS_ RULE_MAIN T_BEGIN RULE_STMTS END MAIN .
 
     $default  reduce using rule 1 (RULE_PROGRAM)
 
 
-State 132
-
-   56 RULE_ARGS: TYPE ID COMMA RULE_ARGS .
-
-    $default  reduce using rule 56 (RULE_ARGS)
-
-
-State 133
-
-   80 RULE_PROCEDURE: PROCEDURE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS . END ID
-
-    END  shift, and go to state 166
-
-
 State 134
 
-   77 RULE_FUNCTION: FUNCTION TYPE ID LPAREN RULE_ARGS RPAREN T_BEGIN . RULE_STMTS RULE_RETURN END ID
+   58 RULE_ARGS: TYPE ID COMMA RULE_ARGS .
+
+    $default  reduce using rule 58 (RULE_ARGS)
+
+
+State 135
+
+   82 RULE_PROCEDURE: PROCEDURE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS . END ID
+
+    END  shift, and go to state 169
+
+
+State 136
+
+   79 RULE_FUNCTION: FUNCTION TYPE ID LPAREN RULE_ARGS RPAREN T_BEGIN . RULE_STMTS RULE_RETURN END ID
 
     ID         shift, and go to state 23
     INT        shift, and go to state 24
@@ -2013,7 +2060,7 @@ State 134
     RULE_TYPE           go to state 40
     RULE_ASSIGN         go to state 41
     RULE_REGISTER_DECL  go to state 42
-    RULE_STMTS          go to state 167
+    RULE_STMTS          go to state 170
     RULE_STMT           go to state 44
     RULE_SUBPROGRAM     go to state 45
     RULE_FUNCTION       go to state 7
@@ -2027,7 +2074,7 @@ State 134
     RULE_PRINT          go to state 52
 
 
-State 135
+State 137
 
    17 RULE_ARRAY_DECL: LBRACE RULE_EXP RBRACE . RULE_ARRAY_DECL
 
@@ -2035,71 +2082,71 @@ State 135
 
     $default  reduce using rule 18 (RULE_ARRAY_DECL)
 
-    RULE_ARRAY_DECL  go to state 168
+    RULE_ARRAY_DECL  go to state 171
 
 
-State 136
+State 138
 
-   62 RULE_STMT: ID LPAREN RULE_EXPS RPAREN . SEMICOLON
+   64 RULE_STMT: ID LPAREN RULE_EXPS RPAREN . SEMICOLON
 
-    SEMICOLON  shift, and go to state 169
+    SEMICOLON  shift, and go to state 172
 
 
-State 137
+State 139
 
    21 RULE_EXPS: RULE_EXP RULE_EXPS .
 
     $default  reduce using rule 21 (RULE_EXPS)
 
 
-State 138
+State 140
 
    14 RULE_ASSIGN_: CCHAR .
 
     $default  reduce using rule 14 (RULE_ASSIGN_)
 
 
-State 139
+State 141
 
    15 RULE_ASSIGN_: CSTRING .
 
     $default  reduce using rule 15 (RULE_ASSIGN_)
 
 
-State 140
+State 142
 
    16 RULE_ASSIGN_: CARRAY .
 
     $default  reduce using rule 16 (RULE_ASSIGN_)
 
 
-State 141
+State 143
 
    12 RULE_ASSIGN: ID RULE_ARRAY_DECL ASSIGN RULE_ASSIGN_ . SEMICOLON
 
-    SEMICOLON  shift, and go to state 170
+    SEMICOLON  shift, and go to state 173
 
 
-State 142
+State 144
 
    13 RULE_ASSIGN_: RULE_EXP .
-   53 RULE_EXP: RULE_EXP . OR RULE_EXP
+   55 RULE_EXP: RULE_EXP . OR RULE_EXP
 
-    OR  shift, and go to state 125
+    OR  shift, and go to state 127
 
     $default  reduce using rule 13 (RULE_ASSIGN_)
 
 
-State 143
+State 145
 
    19 RULE_REGISTER_DECL: REGISTER RULE_TYPE ID SEMICOLON .
 
     $default  reduce using rule 19 (RULE_REGISTER_DECL)
 
 
-State 144
+State 146
 
-   81 RULE_IF: IF LPAREN RULE_R RPAREN . RULE_STMTS RULE_ELIF RULE_ELSE END IF
+   83 RULE_IF: IF LPAREN RULE_EXP RPAREN . RULE_STMTS RULE_ELIF RULE_ELSE END IF
 
     ID         shift, and go to state 23
     INT        shift, and go to state 24
@@ -2124,7 +2171,7 @@ State 144
     RULE_TYPE           go to state 40
     RULE_ASSIGN         go to state 41
     RULE_REGISTER_DECL  go to state 42
-    RULE_STMTS          go to state 171
+    RULE_STMTS          go to state 174
     RULE_STMT           go to state 44
     RULE_SUBPROGRAM     go to state 45
     RULE_FUNCTION       go to state 7
@@ -2138,741 +2185,710 @@ State 144
     RULE_PRINT          go to state 52
 
 
-State 145
+State 147
 
-   86 RULE_SWITCH: SWITCH LPAREN RULE_VAR RPAREN . RULE_CASE RULE_DEFAULT END SWITCH
+   88 RULE_SWITCH: SWITCH LPAREN RULE_VAR RPAREN . RULE_CASE RULE_DEFAULT END SWITCH
 
-    CASE  shift, and go to state 172
+    CASE  shift, and go to state 175
 
-    $default  reduce using rule 88 (RULE_CASE)
+    $default  reduce using rule 90 (RULE_CASE)
 
-    RULE_CASE  go to state 173
+    RULE_CASE  go to state 176
 
 
-State 146
+State 148
 
-   91 RULE_FOR: FOR LPAREN RULE_ASSIGN SEMICOLON . RULE_EXP SEMICOLON RULE_EXP RPAREN RULE_STMTS END FOR
+   93 RULE_FOR: FOR LPAREN RULE_ASSIGN SEMICOLON . RULE_EXP SEMICOLON RULE_EXP RPAREN RULE_STMTS END FOR
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
     NOT       shift, and go to state 71
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 79
-    RULE_AT   go to state 80
-    RULE_R    go to state 81
-    RULE_LU   go to state 82
-    RULE_LC   go to state 83
-    RULE_EXP  go to state 174
-
-
-State 147
-
-   92 RULE_LOOP: LOOP RULE_STMTS END LOOP .
-
-    $default  reduce using rule 92 (RULE_LOOP)
-
-
-State 148
-
-   29 RULE_O_: DOT ID .
-
-    $default  reduce using rule 29 (RULE_O_)
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 80
+    RULE_AT   go to state 81
+    RULE_R    go to state 82
+    RULE_LU   go to state 83
+    RULE_LC   go to state 84
+    RULE_EXP  go to state 177
 
 
 State 149
 
-   28 RULE_O_: LPAREN RULE_EXPS . RPAREN
+   94 RULE_LOOP: LOOP RULE_STMTS END LOOP .
 
-    RPAREN  shift, and go to state 175
+    $default  reduce using rule 94 (RULE_LOOP)
 
 
 State 150
+
+   30 RULE_O_: DOT ID .
+
+    $default  reduce using rule 30 (RULE_O_)
+
+
+State 151
+
+   29 RULE_O_: LBRACKET RULE_EXPS . RBRACKET RULE_O_
+
+    RBRACKET  shift, and go to state 178
+
+
+State 152
+
+   28 RULE_O: CALL ID LPAREN . RULE_EXPS RPAREN
+
+    ID        shift, and go to state 67
+    CINT      shift, and go to state 68
+    CFLOAT    shift, and go to state 69
+    CBOOL     shift, and go to state 70
+    NOT       shift, and go to state 71
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
+
+    RULE_EXPS  go to state 179
+    RULE_LIT   go to state 76
+    RULE_O     go to state 77
+    RULE_AU    go to state 78
+    RULE_AP    go to state 79
+    RULE_AF    go to state 80
+    RULE_AT    go to state 81
+    RULE_R     go to state 82
+    RULE_LU    go to state 83
+    RULE_LC    go to state 84
+    RULE_EXP   go to state 96
+
+
+State 153
 
    27 RULE_O: LPAREN RULE_EXP RPAREN .
 
     $default  reduce using rule 27 (RULE_O)
 
 
-State 151
-
-   33 RULE_AP: RULE_AP . POWER RULE_AP
-   33        | RULE_AP POWER RULE_AP .
-
-    POWER  shift, and go to state 111
-
-    $default  reduce using rule 33 (RULE_AP)
-
-
-State 152
-
-   35 RULE_AF: RULE_AF . MULTIPLY RULE_AF
-   35        | RULE_AF MULTIPLY RULE_AF .
-   36        | RULE_AF . DIVIDE RULE_AF
-
-    $default  reduce using rule 35 (RULE_AF)
-
-
-State 153
-
-   35 RULE_AF: RULE_AF . MULTIPLY RULE_AF
-   36        | RULE_AF . DIVIDE RULE_AF
-   36        | RULE_AF DIVIDE RULE_AF .
-
-    $default  reduce using rule 36 (RULE_AF)
-
-
 State 154
 
-   35 RULE_AF: RULE_AF . MULTIPLY RULE_AF
-   36        | RULE_AF . DIVIDE RULE_AF
-   38 RULE_AT: RULE_AT PLUS RULE_AF .
+   35 RULE_AP: RULE_AP . POWER RULE_AP
+   35        | RULE_AP POWER RULE_AP .
 
-    MULTIPLY  shift, and go to state 112
-    DIVIDE    shift, and go to state 113
+    POWER  shift, and go to state 113
 
-    $default  reduce using rule 38 (RULE_AT)
+    $default  reduce using rule 35 (RULE_AP)
 
 
 State 155
 
-   35 RULE_AF: RULE_AF . MULTIPLY RULE_AF
-   36        | RULE_AF . DIVIDE RULE_AF
-   39 RULE_AT: RULE_AT MINUS RULE_AF .
+   37 RULE_AF: RULE_AF . MULTIPLY RULE_AF
+   37        | RULE_AF MULTIPLY RULE_AF .
+   38        | RULE_AF . DIVIDE RULE_AF
 
-    MULTIPLY  shift, and go to state 112
-    DIVIDE    shift, and go to state 113
-
-    $default  reduce using rule 39 (RULE_AT)
+    $default  reduce using rule 37 (RULE_AF)
 
 
 State 156
 
-   38 RULE_AT: RULE_AT . PLUS RULE_AF
-   39        | RULE_AT . MINUS RULE_AF
-   42 RULE_R_: LESSTHAN RULE_AT .
+   37 RULE_AF: RULE_AF . MULTIPLY RULE_AF
+   38        | RULE_AF . DIVIDE RULE_AF
+   38        | RULE_AF DIVIDE RULE_AF .
 
-    PLUS   shift, and go to state 114
-    MINUS  shift, and go to state 115
-
-    $default  reduce using rule 42 (RULE_R_)
+    $default  reduce using rule 38 (RULE_AF)
 
 
 State 157
 
-   38 RULE_AT: RULE_AT . PLUS RULE_AF
-   39        | RULE_AT . MINUS RULE_AF
-   43 RULE_R_: GREATERTHAN RULE_AT .
+   37 RULE_AF: RULE_AF . MULTIPLY RULE_AF
+   38        | RULE_AF . DIVIDE RULE_AF
+   40 RULE_AT: RULE_AT PLUS RULE_AF .
 
-    PLUS   shift, and go to state 114
-    MINUS  shift, and go to state 115
+    MULTIPLY  shift, and go to state 114
+    DIVIDE    shift, and go to state 115
 
-    $default  reduce using rule 43 (RULE_R_)
+    $default  reduce using rule 40 (RULE_AT)
 
 
 State 158
 
-   38 RULE_AT: RULE_AT . PLUS RULE_AF
-   39        | RULE_AT . MINUS RULE_AF
-   44 RULE_R_: LESSTHANOREQUAL RULE_AT .
+   37 RULE_AF: RULE_AF . MULTIPLY RULE_AF
+   38        | RULE_AF . DIVIDE RULE_AF
+   41 RULE_AT: RULE_AT MINUS RULE_AF .
 
-    PLUS   shift, and go to state 114
-    MINUS  shift, and go to state 115
+    MULTIPLY  shift, and go to state 114
+    DIVIDE    shift, and go to state 115
 
-    $default  reduce using rule 44 (RULE_R_)
+    $default  reduce using rule 41 (RULE_AT)
 
 
 State 159
 
-   38 RULE_AT: RULE_AT . PLUS RULE_AF
-   39        | RULE_AT . MINUS RULE_AF
-   45 RULE_R_: GREATERTHANOREQUAL RULE_AT .
+   40 RULE_AT: RULE_AT . PLUS RULE_AF
+   41        | RULE_AT . MINUS RULE_AF
+   44 RULE_R_: LESSTHAN RULE_AT .
 
-    PLUS   shift, and go to state 114
-    MINUS  shift, and go to state 115
+    PLUS   shift, and go to state 116
+    MINUS  shift, and go to state 117
 
-    $default  reduce using rule 45 (RULE_R_)
+    $default  reduce using rule 44 (RULE_R_)
 
 
 State 160
 
-   38 RULE_AT: RULE_AT . PLUS RULE_AF
-   39        | RULE_AT . MINUS RULE_AF
-   46 RULE_R_: EQUALS RULE_AT .
+   40 RULE_AT: RULE_AT . PLUS RULE_AF
+   41        | RULE_AT . MINUS RULE_AF
+   45 RULE_R_: GREATERTHAN RULE_AT .
 
-    PLUS   shift, and go to state 114
-    MINUS  shift, and go to state 115
+    PLUS   shift, and go to state 116
+    MINUS  shift, and go to state 117
 
-    $default  reduce using rule 46 (RULE_R_)
+    $default  reduce using rule 45 (RULE_R_)
 
 
 State 161
 
-   38 RULE_AT: RULE_AT . PLUS RULE_AF
-   39        | RULE_AT . MINUS RULE_AF
-   47 RULE_R_: NOTEQUAL RULE_AT .
+   40 RULE_AT: RULE_AT . PLUS RULE_AF
+   41        | RULE_AT . MINUS RULE_AF
+   46 RULE_R_: LESSTHANOREQUAL RULE_AT .
 
-    PLUS   shift, and go to state 114
-    MINUS  shift, and go to state 115
+    PLUS   shift, and go to state 116
+    MINUS  shift, and go to state 117
 
-    $default  reduce using rule 47 (RULE_R_)
+    $default  reduce using rule 46 (RULE_R_)
 
 
 State 162
 
-   51 RULE_LC: RULE_LC . AND RULE_LC
-   51        | RULE_LC AND RULE_LC .
+   40 RULE_AT: RULE_AT . PLUS RULE_AF
+   41        | RULE_AT . MINUS RULE_AF
+   47 RULE_R_: GREATERTHANOREQUAL RULE_AT .
 
-    $default  reduce using rule 51 (RULE_LC)
+    PLUS   shift, and go to state 116
+    MINUS  shift, and go to state 117
+
+    $default  reduce using rule 47 (RULE_R_)
 
 
 State 163
 
-   94 RULE_UNLESS: UNLESS RULE_EXP DO RULE_STMT .
+   40 RULE_AT: RULE_AT . PLUS RULE_AF
+   41        | RULE_AT . MINUS RULE_AF
+   48 RULE_R_: EQUALS RULE_AT .
 
-    $default  reduce using rule 94 (RULE_UNLESS)
+    PLUS   shift, and go to state 116
+    MINUS  shift, and go to state 117
+
+    $default  reduce using rule 48 (RULE_R_)
 
 
 State 164
 
-   53 RULE_EXP: RULE_EXP . OR RULE_EXP
-   53         | RULE_EXP OR RULE_EXP .
+   40 RULE_AT: RULE_AT . PLUS RULE_AF
+   41        | RULE_AT . MINUS RULE_AF
+   49 RULE_R_: NOTEQUAL RULE_AT .
 
-    $default  reduce using rule 53 (RULE_EXP)
+    PLUS   shift, and go to state 116
+    MINUS  shift, and go to state 117
+
+    $default  reduce using rule 49 (RULE_R_)
 
 
 State 165
 
-   95 RULE_PRINT: PRINT LPAREN RULE_PRINT_ RPAREN . SEMICOLON
+   53 RULE_LC: RULE_LC . AND RULE_LC
+   53        | RULE_LC AND RULE_LC .
 
-    SEMICOLON  shift, and go to state 176
+    $default  reduce using rule 53 (RULE_LC)
 
 
 State 166
 
-   80 RULE_PROCEDURE: PROCEDURE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS END . ID
+   96 RULE_UNLESS: UNLESS RULE_EXP DO RULE_STMT .
 
-    ID  shift, and go to state 177
+    $default  reduce using rule 96 (RULE_UNLESS)
 
 
 State 167
 
-   77 RULE_FUNCTION: FUNCTION TYPE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS . RULE_RETURN END ID
+   55 RULE_EXP: RULE_EXP . OR RULE_EXP
+   55         | RULE_EXP OR RULE_EXP .
 
-    RETURN  shift, and go to state 178
-
-    $default  reduce using rule 79 (RULE_RETURN)
-
-    RULE_RETURN  go to state 179
+    $default  reduce using rule 55 (RULE_EXP)
 
 
 State 168
+
+   97 RULE_PRINT: PRINT LPAREN RULE_PRINT_ RPAREN . SEMICOLON
+
+    SEMICOLON  shift, and go to state 180
+
+
+State 169
+
+   82 RULE_PROCEDURE: PROCEDURE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS END . ID
+
+    ID  shift, and go to state 181
+
+
+State 170
+
+   79 RULE_FUNCTION: FUNCTION TYPE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS . RULE_RETURN END ID
+
+    RETURN  shift, and go to state 182
+
+    $default  reduce using rule 81 (RULE_RETURN)
+
+    RULE_RETURN  go to state 183
+
+
+State 171
 
    17 RULE_ARRAY_DECL: LBRACE RULE_EXP RBRACE RULE_ARRAY_DECL .
 
     $default  reduce using rule 17 (RULE_ARRAY_DECL)
 
 
-State 169
+State 172
 
-   62 RULE_STMT: ID LPAREN RULE_EXPS RPAREN SEMICOLON .
+   64 RULE_STMT: ID LPAREN RULE_EXPS RPAREN SEMICOLON .
 
-    $default  reduce using rule 62 (RULE_STMT)
+    $default  reduce using rule 64 (RULE_STMT)
 
 
-State 170
+State 173
 
    12 RULE_ASSIGN: ID RULE_ARRAY_DECL ASSIGN RULE_ASSIGN_ SEMICOLON .
 
     $default  reduce using rule 12 (RULE_ASSIGN)
 
 
-State 171
-
-   81 RULE_IF: IF LPAREN RULE_R RPAREN RULE_STMTS . RULE_ELIF RULE_ELSE END IF
-
-    ELIF  shift, and go to state 180
-
-    $default  reduce using rule 83 (RULE_ELIF)
-
-    RULE_ELIF  go to state 181
-
-
-State 172
-
-   87 RULE_CASE: CASE . LPAREN RULE_EXP LPAREN COLON RULE_STMTS BREAK CASE
-
-    LPAREN  shift, and go to state 182
-
-
-State 173
-
-   86 RULE_SWITCH: SWITCH LPAREN RULE_VAR RPAREN RULE_CASE . RULE_DEFAULT END SWITCH
-
-    DEFAULT  shift, and go to state 183
-
-    $default  reduce using rule 90 (RULE_DEFAULT)
-
-    RULE_DEFAULT  go to state 184
-
-
 State 174
 
-   53 RULE_EXP: RULE_EXP . OR RULE_EXP
-   91 RULE_FOR: FOR LPAREN RULE_ASSIGN SEMICOLON RULE_EXP . SEMICOLON RULE_EXP RPAREN RULE_STMTS END FOR
+   83 RULE_IF: IF LPAREN RULE_EXP RPAREN RULE_STMTS . RULE_ELIF RULE_ELSE END IF
 
-    SEMICOLON  shift, and go to state 185
-    OR         shift, and go to state 125
+    ELIF  shift, and go to state 184
+
+    $default  reduce using rule 85 (RULE_ELIF)
+
+    RULE_ELIF  go to state 185
 
 
 State 175
 
-   28 RULE_O_: LPAREN RULE_EXPS RPAREN .
+   89 RULE_CASE: CASE . LPAREN RULE_EXP LPAREN COLON RULE_STMTS BREAK CASE
 
-    $default  reduce using rule 28 (RULE_O_)
+    LPAREN  shift, and go to state 186
 
 
 State 176
 
-   95 RULE_PRINT: PRINT LPAREN RULE_PRINT_ RPAREN SEMICOLON .
+   88 RULE_SWITCH: SWITCH LPAREN RULE_VAR RPAREN RULE_CASE . RULE_DEFAULT END SWITCH
 
-    $default  reduce using rule 95 (RULE_PRINT)
+    DEFAULT  shift, and go to state 187
+
+    $default  reduce using rule 92 (RULE_DEFAULT)
+
+    RULE_DEFAULT  go to state 188
 
 
 State 177
 
-   80 RULE_PROCEDURE: PROCEDURE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS END ID .
+   55 RULE_EXP: RULE_EXP . OR RULE_EXP
+   93 RULE_FOR: FOR LPAREN RULE_ASSIGN SEMICOLON RULE_EXP . SEMICOLON RULE_EXP RPAREN RULE_STMTS END FOR
 
-    $default  reduce using rule 80 (RULE_PROCEDURE)
+    SEMICOLON  shift, and go to state 189
+    OR         shift, and go to state 127
 
 
 State 178
 
-   78 RULE_RETURN: RETURN . RULE_EXP SEMICOLON
+   29 RULE_O_: LBRACKET RULE_EXPS RBRACKET . RULE_O_
 
-    ID        shift, and go to state 67
-    CINT      shift, and go to state 68
-    CFLOAT    shift, and go to state 69
-    CBOOL     shift, and go to state 70
-    NOT       shift, and go to state 71
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    DOT       shift, and go to state 105
+    LBRACKET  shift, and go to state 106
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 79
-    RULE_AT   go to state 80
-    RULE_R    go to state 81
-    RULE_LU   go to state 82
-    RULE_LC   go to state 83
-    RULE_EXP  go to state 186
+    $default  reduce using rule 31 (RULE_O_)
+
+    RULE_O_  go to state 190
 
 
 State 179
 
-   77 RULE_FUNCTION: FUNCTION TYPE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS RULE_RETURN . END ID
+   28 RULE_O: CALL ID LPAREN RULE_EXPS . RPAREN
 
-    END  shift, and go to state 187
+    RPAREN  shift, and go to state 191
 
 
 State 180
 
-   82 RULE_ELIF: ELIF . LPAREN RULE_EXP RPAREN RULE_STMTS ELIF
+   97 RULE_PRINT: PRINT LPAREN RULE_PRINT_ RPAREN SEMICOLON .
 
-    LPAREN  shift, and go to state 188
+    $default  reduce using rule 97 (RULE_PRINT)
 
 
 State 181
 
-   81 RULE_IF: IF LPAREN RULE_R RPAREN RULE_STMTS RULE_ELIF . RULE_ELSE END IF
+   82 RULE_PROCEDURE: PROCEDURE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS END ID .
 
-    ELSE  shift, and go to state 189
-
-    $default  reduce using rule 85 (RULE_ELSE)
-
-    RULE_ELSE  go to state 190
+    $default  reduce using rule 82 (RULE_PROCEDURE)
 
 
 State 182
 
-   87 RULE_CASE: CASE LPAREN . RULE_EXP LPAREN COLON RULE_STMTS BREAK CASE
+   80 RULE_RETURN: RETURN . RULE_EXP SEMICOLON
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
     NOT       shift, and go to state 71
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 79
-    RULE_AT   go to state 80
-    RULE_R    go to state 81
-    RULE_LU   go to state 82
-    RULE_LC   go to state 83
-    RULE_EXP  go to state 191
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 80
+    RULE_AT   go to state 81
+    RULE_R    go to state 82
+    RULE_LU   go to state 83
+    RULE_LC   go to state 84
+    RULE_EXP  go to state 192
 
 
 State 183
 
-   89 RULE_DEFAULT: DEFAULT . COLON RULE_STMTS BREAK
-
-    COLON  shift, and go to state 192
-
-
-State 184
-
-   86 RULE_SWITCH: SWITCH LPAREN RULE_VAR RPAREN RULE_CASE RULE_DEFAULT . END SWITCH
+   79 RULE_FUNCTION: FUNCTION TYPE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS RULE_RETURN . END ID
 
     END  shift, and go to state 193
 
 
+State 184
+
+   84 RULE_ELIF: ELIF . LPAREN RULE_EXP RPAREN RULE_STMTS ELIF
+
+    LPAREN  shift, and go to state 194
+
+
 State 185
 
-   91 RULE_FOR: FOR LPAREN RULE_ASSIGN SEMICOLON RULE_EXP SEMICOLON . RULE_EXP RPAREN RULE_STMTS END FOR
+   83 RULE_IF: IF LPAREN RULE_EXP RPAREN RULE_STMTS RULE_ELIF . RULE_ELSE END IF
 
-    ID        shift, and go to state 67
-    CINT      shift, and go to state 68
-    CFLOAT    shift, and go to state 69
-    CBOOL     shift, and go to state 70
-    NOT       shift, and go to state 71
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    ELSE  shift, and go to state 195
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 79
-    RULE_AT   go to state 80
-    RULE_R    go to state 81
-    RULE_LU   go to state 82
-    RULE_LC   go to state 83
-    RULE_EXP  go to state 194
+    $default  reduce using rule 87 (RULE_ELSE)
+
+    RULE_ELSE  go to state 196
 
 
 State 186
 
-   53 RULE_EXP: RULE_EXP . OR RULE_EXP
-   78 RULE_RETURN: RETURN RULE_EXP . SEMICOLON
-
-    SEMICOLON  shift, and go to state 195
-    OR         shift, and go to state 125
-
-
-State 187
-
-   77 RULE_FUNCTION: FUNCTION TYPE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS RULE_RETURN END . ID
-
-    ID  shift, and go to state 196
-
-
-State 188
-
-   82 RULE_ELIF: ELIF LPAREN . RULE_EXP RPAREN RULE_STMTS ELIF
+   89 RULE_CASE: CASE LPAREN . RULE_EXP LPAREN COLON RULE_STMTS BREAK CASE
 
     ID        shift, and go to state 67
     CINT      shift, and go to state 68
     CFLOAT    shift, and go to state 69
     CBOOL     shift, and go to state 70
     NOT       shift, and go to state 71
-    LPAREN    shift, and go to state 72
-    UNIPLUS   shift, and go to state 73
-    UNIMINUS  shift, and go to state 74
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
 
-    RULE_LIT  go to state 75
-    RULE_O    go to state 76
-    RULE_AU   go to state 77
-    RULE_AP   go to state 78
-    RULE_AF   go to state 79
-    RULE_AT   go to state 80
-    RULE_R    go to state 81
-    RULE_LU   go to state 82
-    RULE_LC   go to state 83
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 80
+    RULE_AT   go to state 81
+    RULE_R    go to state 82
+    RULE_LU   go to state 83
+    RULE_LC   go to state 84
     RULE_EXP  go to state 197
 
 
-State 189
+State 187
 
-   84 RULE_ELSE: ELSE . RULE_STMTS
+   91 RULE_DEFAULT: DEFAULT . COLON RULE_STMTS BREAK
 
-    ID         shift, and go to state 23
-    INT        shift, and go to state 24
-    FLOAT      shift, and go to state 25
-    BOOL       shift, and go to state 26
-    CHAR       shift, and go to state 27
-    GRAPH      shift, and go to state 28
-    STRING     shift, and go to state 29
-    CONST      shift, and go to state 30
-    REGISTER   shift, and go to state 31
-    IF         shift, and go to state 32
-    SWITCH     shift, and go to state 33
-    FOR        shift, and go to state 34
-    LOOP       shift, and go to state 35
-    EXIT       shift, and go to state 36
-    UNLESS     shift, and go to state 37
-    PRINT      shift, and go to state 38
-    PROCEDURE  shift, and go to state 1
-    FUNCTION   shift, and go to state 2
-
-    RULE_VAR            go to state 39
-    RULE_TYPE           go to state 40
-    RULE_ASSIGN         go to state 41
-    RULE_REGISTER_DECL  go to state 42
-    RULE_STMTS          go to state 198
-    RULE_STMT           go to state 44
-    RULE_SUBPROGRAM     go to state 45
-    RULE_FUNCTION       go to state 7
-    RULE_PROCEDURE      go to state 8
-    RULE_IF             go to state 46
-    RULE_SWITCH         go to state 47
-    RULE_FOR            go to state 48
-    RULE_LOOP           go to state 49
-    RULE_WHEN           go to state 50
-    RULE_UNLESS         go to state 51
-    RULE_PRINT          go to state 52
+    COLON  shift, and go to state 198
 
 
-State 190
+State 188
 
-   81 RULE_IF: IF LPAREN RULE_R RPAREN RULE_STMTS RULE_ELIF RULE_ELSE . END IF
+   88 RULE_SWITCH: SWITCH LPAREN RULE_VAR RPAREN RULE_CASE RULE_DEFAULT . END SWITCH
 
     END  shift, and go to state 199
 
 
+State 189
+
+   93 RULE_FOR: FOR LPAREN RULE_ASSIGN SEMICOLON RULE_EXP SEMICOLON . RULE_EXP RPAREN RULE_STMTS END FOR
+
+    ID        shift, and go to state 67
+    CINT      shift, and go to state 68
+    CFLOAT    shift, and go to state 69
+    CBOOL     shift, and go to state 70
+    NOT       shift, and go to state 71
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
+
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 80
+    RULE_AT   go to state 81
+    RULE_R    go to state 82
+    RULE_LU   go to state 83
+    RULE_LC   go to state 84
+    RULE_EXP  go to state 200
+
+
+State 190
+
+   29 RULE_O_: LBRACKET RULE_EXPS RBRACKET RULE_O_ .
+
+    $default  reduce using rule 29 (RULE_O_)
+
+
 State 191
 
-   53 RULE_EXP: RULE_EXP . OR RULE_EXP
-   87 RULE_CASE: CASE LPAREN RULE_EXP . LPAREN COLON RULE_STMTS BREAK CASE
+   28 RULE_O: CALL ID LPAREN RULE_EXPS RPAREN .
 
-    OR      shift, and go to state 125
-    LPAREN  shift, and go to state 200
+    $default  reduce using rule 28 (RULE_O)
 
 
 State 192
 
-   89 RULE_DEFAULT: DEFAULT COLON . RULE_STMTS BREAK
+   55 RULE_EXP: RULE_EXP . OR RULE_EXP
+   80 RULE_RETURN: RETURN RULE_EXP . SEMICOLON
 
-    ID         shift, and go to state 23
-    INT        shift, and go to state 24
-    FLOAT      shift, and go to state 25
-    BOOL       shift, and go to state 26
-    CHAR       shift, and go to state 27
-    GRAPH      shift, and go to state 28
-    STRING     shift, and go to state 29
-    CONST      shift, and go to state 30
-    REGISTER   shift, and go to state 31
-    IF         shift, and go to state 32
-    SWITCH     shift, and go to state 33
-    FOR        shift, and go to state 34
-    LOOP       shift, and go to state 35
-    EXIT       shift, and go to state 36
-    UNLESS     shift, and go to state 37
-    PRINT      shift, and go to state 38
-    PROCEDURE  shift, and go to state 1
-    FUNCTION   shift, and go to state 2
-
-    RULE_VAR            go to state 39
-    RULE_TYPE           go to state 40
-    RULE_ASSIGN         go to state 41
-    RULE_REGISTER_DECL  go to state 42
-    RULE_STMTS          go to state 201
-    RULE_STMT           go to state 44
-    RULE_SUBPROGRAM     go to state 45
-    RULE_FUNCTION       go to state 7
-    RULE_PROCEDURE      go to state 8
-    RULE_IF             go to state 46
-    RULE_SWITCH         go to state 47
-    RULE_FOR            go to state 48
-    RULE_LOOP           go to state 49
-    RULE_WHEN           go to state 50
-    RULE_UNLESS         go to state 51
-    RULE_PRINT          go to state 52
+    SEMICOLON  shift, and go to state 201
+    OR         shift, and go to state 127
 
 
 State 193
 
-   86 RULE_SWITCH: SWITCH LPAREN RULE_VAR RPAREN RULE_CASE RULE_DEFAULT END . SWITCH
+   79 RULE_FUNCTION: FUNCTION TYPE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS RULE_RETURN END . ID
 
-    SWITCH  shift, and go to state 202
+    ID  shift, and go to state 202
 
 
 State 194
 
-   53 RULE_EXP: RULE_EXP . OR RULE_EXP
-   91 RULE_FOR: FOR LPAREN RULE_ASSIGN SEMICOLON RULE_EXP SEMICOLON RULE_EXP . RPAREN RULE_STMTS END FOR
+   84 RULE_ELIF: ELIF LPAREN . RULE_EXP RPAREN RULE_STMTS ELIF
 
-    OR      shift, and go to state 125
-    RPAREN  shift, and go to state 203
+    ID        shift, and go to state 67
+    CINT      shift, and go to state 68
+    CFLOAT    shift, and go to state 69
+    CBOOL     shift, and go to state 70
+    NOT       shift, and go to state 71
+    CALL      shift, and go to state 72
+    LPAREN    shift, and go to state 73
+    UNIPLUS   shift, and go to state 74
+    UNIMINUS  shift, and go to state 75
+
+    RULE_LIT  go to state 76
+    RULE_O    go to state 77
+    RULE_AU   go to state 78
+    RULE_AP   go to state 79
+    RULE_AF   go to state 80
+    RULE_AT   go to state 81
+    RULE_R    go to state 82
+    RULE_LU   go to state 83
+    RULE_LC   go to state 84
+    RULE_EXP  go to state 203
 
 
 State 195
 
-   78 RULE_RETURN: RETURN RULE_EXP SEMICOLON .
+   86 RULE_ELSE: ELSE . RULE_STMTS
 
-    $default  reduce using rule 78 (RULE_RETURN)
+    ID         shift, and go to state 23
+    INT        shift, and go to state 24
+    FLOAT      shift, and go to state 25
+    BOOL       shift, and go to state 26
+    CHAR       shift, and go to state 27
+    GRAPH      shift, and go to state 28
+    STRING     shift, and go to state 29
+    CONST      shift, and go to state 30
+    REGISTER   shift, and go to state 31
+    IF         shift, and go to state 32
+    SWITCH     shift, and go to state 33
+    FOR        shift, and go to state 34
+    LOOP       shift, and go to state 35
+    EXIT       shift, and go to state 36
+    UNLESS     shift, and go to state 37
+    PRINT      shift, and go to state 38
+    PROCEDURE  shift, and go to state 1
+    FUNCTION   shift, and go to state 2
+
+    RULE_VAR            go to state 39
+    RULE_TYPE           go to state 40
+    RULE_ASSIGN         go to state 41
+    RULE_REGISTER_DECL  go to state 42
+    RULE_STMTS          go to state 204
+    RULE_STMT           go to state 44
+    RULE_SUBPROGRAM     go to state 45
+    RULE_FUNCTION       go to state 7
+    RULE_PROCEDURE      go to state 8
+    RULE_IF             go to state 46
+    RULE_SWITCH         go to state 47
+    RULE_FOR            go to state 48
+    RULE_LOOP           go to state 49
+    RULE_WHEN           go to state 50
+    RULE_UNLESS         go to state 51
+    RULE_PRINT          go to state 52
 
 
 State 196
 
-   77 RULE_FUNCTION: FUNCTION TYPE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS RULE_RETURN END ID .
+   83 RULE_IF: IF LPAREN RULE_EXP RPAREN RULE_STMTS RULE_ELIF RULE_ELSE . END IF
 
-    $default  reduce using rule 77 (RULE_FUNCTION)
+    END  shift, and go to state 205
 
 
 State 197
 
-   53 RULE_EXP: RULE_EXP . OR RULE_EXP
-   82 RULE_ELIF: ELIF LPAREN RULE_EXP . RPAREN RULE_STMTS ELIF
+   55 RULE_EXP: RULE_EXP . OR RULE_EXP
+   89 RULE_CASE: CASE LPAREN RULE_EXP . LPAREN COLON RULE_STMTS BREAK CASE
 
-    OR      shift, and go to state 125
-    RPAREN  shift, and go to state 204
+    OR      shift, and go to state 127
+    LPAREN  shift, and go to state 206
 
 
 State 198
 
-   84 RULE_ELSE: ELSE RULE_STMTS .
+   91 RULE_DEFAULT: DEFAULT COLON . RULE_STMTS BREAK
 
-    $default  reduce using rule 84 (RULE_ELSE)
+    ID         shift, and go to state 23
+    INT        shift, and go to state 24
+    FLOAT      shift, and go to state 25
+    BOOL       shift, and go to state 26
+    CHAR       shift, and go to state 27
+    GRAPH      shift, and go to state 28
+    STRING     shift, and go to state 29
+    CONST      shift, and go to state 30
+    REGISTER   shift, and go to state 31
+    IF         shift, and go to state 32
+    SWITCH     shift, and go to state 33
+    FOR        shift, and go to state 34
+    LOOP       shift, and go to state 35
+    EXIT       shift, and go to state 36
+    UNLESS     shift, and go to state 37
+    PRINT      shift, and go to state 38
+    PROCEDURE  shift, and go to state 1
+    FUNCTION   shift, and go to state 2
+
+    RULE_VAR            go to state 39
+    RULE_TYPE           go to state 40
+    RULE_ASSIGN         go to state 41
+    RULE_REGISTER_DECL  go to state 42
+    RULE_STMTS          go to state 207
+    RULE_STMT           go to state 44
+    RULE_SUBPROGRAM     go to state 45
+    RULE_FUNCTION       go to state 7
+    RULE_PROCEDURE      go to state 8
+    RULE_IF             go to state 46
+    RULE_SWITCH         go to state 47
+    RULE_FOR            go to state 48
+    RULE_LOOP           go to state 49
+    RULE_WHEN           go to state 50
+    RULE_UNLESS         go to state 51
+    RULE_PRINT          go to state 52
 
 
 State 199
 
-   81 RULE_IF: IF LPAREN RULE_R RPAREN RULE_STMTS RULE_ELIF RULE_ELSE END . IF
+   88 RULE_SWITCH: SWITCH LPAREN RULE_VAR RPAREN RULE_CASE RULE_DEFAULT END . SWITCH
 
-    IF  shift, and go to state 205
+    SWITCH  shift, and go to state 208
 
 
 State 200
 
-   87 RULE_CASE: CASE LPAREN RULE_EXP LPAREN . COLON RULE_STMTS BREAK CASE
+   55 RULE_EXP: RULE_EXP . OR RULE_EXP
+   93 RULE_FOR: FOR LPAREN RULE_ASSIGN SEMICOLON RULE_EXP SEMICOLON RULE_EXP . RPAREN RULE_STMTS END FOR
 
-    COLON  shift, and go to state 206
+    OR      shift, and go to state 127
+    RPAREN  shift, and go to state 209
 
 
 State 201
 
-   89 RULE_DEFAULT: DEFAULT COLON RULE_STMTS . BREAK
+   80 RULE_RETURN: RETURN RULE_EXP SEMICOLON .
 
-    BREAK  shift, and go to state 207
+    $default  reduce using rule 80 (RULE_RETURN)
 
 
 State 202
 
-   86 RULE_SWITCH: SWITCH LPAREN RULE_VAR RPAREN RULE_CASE RULE_DEFAULT END SWITCH .
+   79 RULE_FUNCTION: FUNCTION TYPE ID LPAREN RULE_ARGS RPAREN T_BEGIN RULE_STMTS RULE_RETURN END ID .
 
-    $default  reduce using rule 86 (RULE_SWITCH)
+    $default  reduce using rule 79 (RULE_FUNCTION)
 
 
 State 203
 
-   91 RULE_FOR: FOR LPAREN RULE_ASSIGN SEMICOLON RULE_EXP SEMICOLON RULE_EXP RPAREN . RULE_STMTS END FOR
+   55 RULE_EXP: RULE_EXP . OR RULE_EXP
+   84 RULE_ELIF: ELIF LPAREN RULE_EXP . RPAREN RULE_STMTS ELIF
 
-    ID         shift, and go to state 23
-    INT        shift, and go to state 24
-    FLOAT      shift, and go to state 25
-    BOOL       shift, and go to state 26
-    CHAR       shift, and go to state 27
-    GRAPH      shift, and go to state 28
-    STRING     shift, and go to state 29
-    CONST      shift, and go to state 30
-    REGISTER   shift, and go to state 31
-    IF         shift, and go to state 32
-    SWITCH     shift, and go to state 33
-    FOR        shift, and go to state 34
-    LOOP       shift, and go to state 35
-    EXIT       shift, and go to state 36
-    UNLESS     shift, and go to state 37
-    PRINT      shift, and go to state 38
-    PROCEDURE  shift, and go to state 1
-    FUNCTION   shift, and go to state 2
-
-    RULE_VAR            go to state 39
-    RULE_TYPE           go to state 40
-    RULE_ASSIGN         go to state 41
-    RULE_REGISTER_DECL  go to state 42
-    RULE_STMTS          go to state 208
-    RULE_STMT           go to state 44
-    RULE_SUBPROGRAM     go to state 45
-    RULE_FUNCTION       go to state 7
-    RULE_PROCEDURE      go to state 8
-    RULE_IF             go to state 46
-    RULE_SWITCH         go to state 47
-    RULE_FOR            go to state 48
-    RULE_LOOP           go to state 49
-    RULE_WHEN           go to state 50
-    RULE_UNLESS         go to state 51
-    RULE_PRINT          go to state 52
+    OR      shift, and go to state 127
+    RPAREN  shift, and go to state 210
 
 
 State 204
 
-   82 RULE_ELIF: ELIF LPAREN RULE_EXP RPAREN . RULE_STMTS ELIF
+   86 RULE_ELSE: ELSE RULE_STMTS .
 
-    ID         shift, and go to state 23
-    INT        shift, and go to state 24
-    FLOAT      shift, and go to state 25
-    BOOL       shift, and go to state 26
-    CHAR       shift, and go to state 27
-    GRAPH      shift, and go to state 28
-    STRING     shift, and go to state 29
-    CONST      shift, and go to state 30
-    REGISTER   shift, and go to state 31
-    IF         shift, and go to state 32
-    SWITCH     shift, and go to state 33
-    FOR        shift, and go to state 34
-    LOOP       shift, and go to state 35
-    EXIT       shift, and go to state 36
-    UNLESS     shift, and go to state 37
-    PRINT      shift, and go to state 38
-    PROCEDURE  shift, and go to state 1
-    FUNCTION   shift, and go to state 2
-
-    RULE_VAR            go to state 39
-    RULE_TYPE           go to state 40
-    RULE_ASSIGN         go to state 41
-    RULE_REGISTER_DECL  go to state 42
-    RULE_STMTS          go to state 209
-    RULE_STMT           go to state 44
-    RULE_SUBPROGRAM     go to state 45
-    RULE_FUNCTION       go to state 7
-    RULE_PROCEDURE      go to state 8
-    RULE_IF             go to state 46
-    RULE_SWITCH         go to state 47
-    RULE_FOR            go to state 48
-    RULE_LOOP           go to state 49
-    RULE_WHEN           go to state 50
-    RULE_UNLESS         go to state 51
-    RULE_PRINT          go to state 52
+    $default  reduce using rule 86 (RULE_ELSE)
 
 
 State 205
 
-   81 RULE_IF: IF LPAREN RULE_R RPAREN RULE_STMTS RULE_ELIF RULE_ELSE END IF .
+   83 RULE_IF: IF LPAREN RULE_EXP RPAREN RULE_STMTS RULE_ELIF RULE_ELSE END . IF
 
-    $default  reduce using rule 81 (RULE_IF)
+    IF  shift, and go to state 211
 
 
 State 206
 
-   87 RULE_CASE: CASE LPAREN RULE_EXP LPAREN COLON . RULE_STMTS BREAK CASE
+   89 RULE_CASE: CASE LPAREN RULE_EXP LPAREN . COLON RULE_STMTS BREAK CASE
+
+    COLON  shift, and go to state 212
+
+
+State 207
+
+   91 RULE_DEFAULT: DEFAULT COLON RULE_STMTS . BREAK
+
+    BREAK  shift, and go to state 213
+
+
+State 208
+
+   88 RULE_SWITCH: SWITCH LPAREN RULE_VAR RPAREN RULE_CASE RULE_DEFAULT END SWITCH .
+
+    $default  reduce using rule 88 (RULE_SWITCH)
+
+
+State 209
+
+   93 RULE_FOR: FOR LPAREN RULE_ASSIGN SEMICOLON RULE_EXP SEMICOLON RULE_EXP RPAREN . RULE_STMTS END FOR
 
     ID         shift, and go to state 23
     INT        shift, and go to state 24
@@ -2897,7 +2913,7 @@ State 206
     RULE_TYPE           go to state 40
     RULE_ASSIGN         go to state 41
     RULE_REGISTER_DECL  go to state 42
-    RULE_STMTS          go to state 210
+    RULE_STMTS          go to state 214
     RULE_STMT           go to state 44
     RULE_SUBPROGRAM     go to state 45
     RULE_FUNCTION       go to state 7
@@ -2911,64 +2927,153 @@ State 206
     RULE_PRINT          go to state 52
 
 
-State 207
-
-   89 RULE_DEFAULT: DEFAULT COLON RULE_STMTS BREAK .
-
-    $default  reduce using rule 89 (RULE_DEFAULT)
-
-
-State 208
-
-   91 RULE_FOR: FOR LPAREN RULE_ASSIGN SEMICOLON RULE_EXP SEMICOLON RULE_EXP RPAREN RULE_STMTS . END FOR
-
-    END  shift, and go to state 211
-
-
-State 209
-
-   82 RULE_ELIF: ELIF LPAREN RULE_EXP RPAREN RULE_STMTS . ELIF
-
-    ELIF  shift, and go to state 212
-
-
 State 210
 
-   87 RULE_CASE: CASE LPAREN RULE_EXP LPAREN COLON RULE_STMTS . BREAK CASE
+   84 RULE_ELIF: ELIF LPAREN RULE_EXP RPAREN . RULE_STMTS ELIF
 
-    BREAK  shift, and go to state 213
+    ID         shift, and go to state 23
+    INT        shift, and go to state 24
+    FLOAT      shift, and go to state 25
+    BOOL       shift, and go to state 26
+    CHAR       shift, and go to state 27
+    GRAPH      shift, and go to state 28
+    STRING     shift, and go to state 29
+    CONST      shift, and go to state 30
+    REGISTER   shift, and go to state 31
+    IF         shift, and go to state 32
+    SWITCH     shift, and go to state 33
+    FOR        shift, and go to state 34
+    LOOP       shift, and go to state 35
+    EXIT       shift, and go to state 36
+    UNLESS     shift, and go to state 37
+    PRINT      shift, and go to state 38
+    PROCEDURE  shift, and go to state 1
+    FUNCTION   shift, and go to state 2
+
+    RULE_VAR            go to state 39
+    RULE_TYPE           go to state 40
+    RULE_ASSIGN         go to state 41
+    RULE_REGISTER_DECL  go to state 42
+    RULE_STMTS          go to state 215
+    RULE_STMT           go to state 44
+    RULE_SUBPROGRAM     go to state 45
+    RULE_FUNCTION       go to state 7
+    RULE_PROCEDURE      go to state 8
+    RULE_IF             go to state 46
+    RULE_SWITCH         go to state 47
+    RULE_FOR            go to state 48
+    RULE_LOOP           go to state 49
+    RULE_WHEN           go to state 50
+    RULE_UNLESS         go to state 51
+    RULE_PRINT          go to state 52
 
 
 State 211
 
-   91 RULE_FOR: FOR LPAREN RULE_ASSIGN SEMICOLON RULE_EXP SEMICOLON RULE_EXP RPAREN RULE_STMTS END . FOR
+   83 RULE_IF: IF LPAREN RULE_EXP RPAREN RULE_STMTS RULE_ELIF RULE_ELSE END IF .
 
-    FOR  shift, and go to state 214
+    $default  reduce using rule 83 (RULE_IF)
 
 
 State 212
 
-   82 RULE_ELIF: ELIF LPAREN RULE_EXP RPAREN RULE_STMTS ELIF .
+   89 RULE_CASE: CASE LPAREN RULE_EXP LPAREN COLON . RULE_STMTS BREAK CASE
 
-    $default  reduce using rule 82 (RULE_ELIF)
+    ID         shift, and go to state 23
+    INT        shift, and go to state 24
+    FLOAT      shift, and go to state 25
+    BOOL       shift, and go to state 26
+    CHAR       shift, and go to state 27
+    GRAPH      shift, and go to state 28
+    STRING     shift, and go to state 29
+    CONST      shift, and go to state 30
+    REGISTER   shift, and go to state 31
+    IF         shift, and go to state 32
+    SWITCH     shift, and go to state 33
+    FOR        shift, and go to state 34
+    LOOP       shift, and go to state 35
+    EXIT       shift, and go to state 36
+    UNLESS     shift, and go to state 37
+    PRINT      shift, and go to state 38
+    PROCEDURE  shift, and go to state 1
+    FUNCTION   shift, and go to state 2
+
+    RULE_VAR            go to state 39
+    RULE_TYPE           go to state 40
+    RULE_ASSIGN         go to state 41
+    RULE_REGISTER_DECL  go to state 42
+    RULE_STMTS          go to state 216
+    RULE_STMT           go to state 44
+    RULE_SUBPROGRAM     go to state 45
+    RULE_FUNCTION       go to state 7
+    RULE_PROCEDURE      go to state 8
+    RULE_IF             go to state 46
+    RULE_SWITCH         go to state 47
+    RULE_FOR            go to state 48
+    RULE_LOOP           go to state 49
+    RULE_WHEN           go to state 50
+    RULE_UNLESS         go to state 51
+    RULE_PRINT          go to state 52
 
 
 State 213
 
-   87 RULE_CASE: CASE LPAREN RULE_EXP LPAREN COLON RULE_STMTS BREAK . CASE
+   91 RULE_DEFAULT: DEFAULT COLON RULE_STMTS BREAK .
 
-    CASE  shift, and go to state 215
+    $default  reduce using rule 91 (RULE_DEFAULT)
 
 
 State 214
 
-   91 RULE_FOR: FOR LPAREN RULE_ASSIGN SEMICOLON RULE_EXP SEMICOLON RULE_EXP RPAREN RULE_STMTS END FOR .
+   93 RULE_FOR: FOR LPAREN RULE_ASSIGN SEMICOLON RULE_EXP SEMICOLON RULE_EXP RPAREN RULE_STMTS . END FOR
 
-    $default  reduce using rule 91 (RULE_FOR)
+    END  shift, and go to state 217
 
 
 State 215
 
-   87 RULE_CASE: CASE LPAREN RULE_EXP LPAREN COLON RULE_STMTS BREAK CASE .
+   84 RULE_ELIF: ELIF LPAREN RULE_EXP RPAREN RULE_STMTS . ELIF
 
-    $default  reduce using rule 87 (RULE_CASE)
+    ELIF  shift, and go to state 218
+
+
+State 216
+
+   89 RULE_CASE: CASE LPAREN RULE_EXP LPAREN COLON RULE_STMTS . BREAK CASE
+
+    BREAK  shift, and go to state 219
+
+
+State 217
+
+   93 RULE_FOR: FOR LPAREN RULE_ASSIGN SEMICOLON RULE_EXP SEMICOLON RULE_EXP RPAREN RULE_STMTS END . FOR
+
+    FOR  shift, and go to state 220
+
+
+State 218
+
+   84 RULE_ELIF: ELIF LPAREN RULE_EXP RPAREN RULE_STMTS ELIF .
+
+    $default  reduce using rule 84 (RULE_ELIF)
+
+
+State 219
+
+   89 RULE_CASE: CASE LPAREN RULE_EXP LPAREN COLON RULE_STMTS BREAK . CASE
+
+    CASE  shift, and go to state 221
+
+
+State 220
+
+   93 RULE_FOR: FOR LPAREN RULE_ASSIGN SEMICOLON RULE_EXP SEMICOLON RULE_EXP RPAREN RULE_STMTS END FOR .
+
+    $default  reduce using rule 93 (RULE_FOR)
+
+
+State 221
+
+   89 RULE_CASE: CASE LPAREN RULE_EXP LPAREN COLON RULE_STMTS BREAK CASE .
+
+    $default  reduce using rule 89 (RULE_CASE)

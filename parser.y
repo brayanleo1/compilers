@@ -47,9 +47,9 @@ RULE_EXPS          : RULE_EXP | RULE_EXP RULE_EXPS
               ;
 RULE_LIT           : CINT | CFLOAT | CBOOL
               ;
-RULE_O             : ID RULE_O_ | RULE_LIT | LPAREN RULE_EXP RPAREN
+RULE_O             : ID RULE_O_ | RULE_LIT | LPAREN RULE_EXP RPAREN | CALL ID LPAREN RULE_EXPS RPAREN
               ;
-RULE_O_            : LPAREN RULE_EXPS RPAREN | DOT ID
+RULE_O_            : LBRACKET RULE_EXPS RBRACKET RULE_O_ | DOT ID |
               ;
 RULE_AU            : UNIPLUS RULE_AU | UNIMINUS RULE_AU | RULE_O
               ;

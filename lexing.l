@@ -2,8 +2,8 @@
     /* C Declarations */
     #include <stdio.h>
     #include <stdlib.h>
-    //#include "y.tab.h" // If you are using YACC/Bison for parsing
-    #include "tokens.h"
+    #include "y.tab.h" // If you are using YACC/Bison for parsing
+    //#include "tokens.h"
 %}
 
 %%
@@ -12,7 +12,7 @@
 
 "program"          { return PROGRAM; }
 "main"             { return MAIN; }
-"begin"            { return BEGIN; }
+"begin"            { return T_BEGIN; }
 "end"              { return END; }
 "const"            { return CONST; }
 "int"              { return INT; }
@@ -64,8 +64,9 @@
 "-"                { return MINUS; }
 "*"                { return MULTIPLY; }
 "/"                { return DIVIDE; }
-"%"                { return MODULUS; }
 "**"               { return POWER; }
+"++"               { return UNIPLUS; }
+"--"               { return UNIMINUS; }
 
 [0-9]+             { /*yylval.int_val = atoi(yytext);*/ return CINT; }
 [0-9]+\.[0-9]*     { /*yylval.real_val = atof(yytext);*/ return CFLOAT; }
@@ -94,3 +95,4 @@ int yyerror(char *s) {
     fprintf(stderr, "Error: %s\n", s);
    return 0;
 }
+
